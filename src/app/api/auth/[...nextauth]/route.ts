@@ -1,46 +1,27 @@
 import { config } from "@/lib/config";
 import { NextAuthOptions, Theme } from "next-auth";
 import NextAuth from "next-auth/next";
-import EmailProvider from "next-auth/providers/email";
-import { createTransport } from "nodemailer";
 import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions: NextAuthOptions = {
   providers: [
-    EmailProvider({
-      server: {
-        service: "gmail",
-        host: "smtp.gmail.com",
-        port: 465,
-        auth: {
-          user: config.gmail.user,
-          pass: config.gmail.pass,
-        },
-      },
-      from: config.gmail.user,
-      maxAge: 1 * 60 * 60, // 1hour
-      async sendVerificationRequest(params) {
-        const { identifier, url, provider, theme } = params;
-        const { host } = new URL(url);
-        // NOTE: You are not required to use `nodemailer`, use whatever you want.
-        const transport = createTransport(provider.server);
-        const result = await transport.sendMail({
-          to: identifier,
-          from: provider.from,
-          subject: `Sign in to ${host}`,
-          text: text({ url, host }),
-          html: html({ url, host, theme }),
-        });
-        const failed = result.rejected.concat(result.pending).filter(Boolean);
-        if (failed.length) {
-          throw new Error(`Email(s) (${failed.join(", ")}) could not be sent`);
-        }
-      },
-    }),
     CredentialsProvider({
       credentials: {
-        a: { label: "" },
+        email: {
+          label: "Email",
+          type: "email",
+          placeholder: "I need... Email",
+        },
+        token: { label: "Token", type: "text", placeholder: "GoGo Email ~" },
       },
-      authorize(credentials, req) {},
+      async authorize(credentials, req) {
+        const { email, token } = credentials!;
+
+        const member = { id: "2321" };
+        if (!member) {
+          return null;
+        }
+        return member;
+      },
     }),
   ],
   callbacks: {},
