@@ -1,12 +1,17 @@
-import { regEmail } from "@/utils/regex";
-import mongoose, { ObjectId } from "mongoose";
+import { regEmail, regPhone } from "@/utils/regex";
+import mongoose, { ObjectId, model } from "mongoose";
+
 export type DBMember = {
   _id: ObjectId;
   email: string;
   name: string;
   workType: string;
   enterDate: string;
-  b;
+  birthDay: string;
+  phone: string;
+  isAdmin: boolean;
+  resignDate: string;
+  slackUID: string;
 };
 
 const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>({
@@ -20,11 +25,11 @@ const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>({
   },
   name: { type: String, required: true, trim: true },
   workType: { type: String, required: true, trim: true },
-  enterDate: { type: Date, required: true, trim: true },
-  birthDay: { type: Date, required: true, trim: true },
+  enterDate: { type: String, required: true, trim: true },
+  birthDay: { type: String, required: true, trim: true },
   phone: { type: String, required: true, trim: true, match: regPhone },
   isAdmin: { type: Boolean, required: true },
-  resignDate: { type: Date, required: false, default: null },
+  resignDate: { type: String, required: false, default: null },
   slackUID: {
     type: String,
     required: false,
@@ -34,3 +39,17 @@ const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>({
     unique: true,
   },
 });
+
+memberSchema.pre("save", async function (this, next) {
+  const member = await Member.findOne({ email: this.email }).exec();
+
+  if (member) {
+    return next(new Error(`${this.email}은 존재 합니다.`));
+  }
+
+  next();
+});
+
+const Member = mongoose.models.Member || model("Member", memberSchema);
+
+export { Member };
