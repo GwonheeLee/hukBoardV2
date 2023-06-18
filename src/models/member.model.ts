@@ -1,18 +1,6 @@
+import { DBMember } from "@/types/member";
 import { regEmail, regPhone } from "@/utils/regex";
-import mongoose, { ObjectId, model } from "mongoose";
-
-export type DBMember = {
-  _id: ObjectId;
-  email: string;
-  name: string;
-  workType: string;
-  enterDate: string;
-  birthDay: string;
-  phone: string;
-  isAdmin: boolean;
-  resignDate: string;
-  slackUID: string;
-};
+import mongoose, { model } from "mongoose";
 
 const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>({
   email: {

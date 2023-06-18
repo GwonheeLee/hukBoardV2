@@ -1,7 +1,7 @@
 import { regEmail } from "@/utils/regex";
 import mongoose, { ObjectId, model } from "mongoose";
 
-type DBLoginCode = {
+export type DBLoginCode = {
   _id: ObjectId;
   email: string;
   code: string;

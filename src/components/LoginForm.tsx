@@ -9,6 +9,7 @@ enum LoginStep {
   STEP1,
   STEP2,
 }
+
 export default function EmailCheckForm() {
   const [step, setStep] = useState(LoginStep.STEP1);
   const [loading, setLoading] = useState(false);

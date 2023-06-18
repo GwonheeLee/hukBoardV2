@@ -1,8 +1,4 @@
-export type AuthUser = {
-  email: string;
-  name: string;
-  isAdmin: boolean;
-};
+import { AuthUser } from "./member";
 declare module "next-auth" {
   interface Session {
     user: AuthUser;

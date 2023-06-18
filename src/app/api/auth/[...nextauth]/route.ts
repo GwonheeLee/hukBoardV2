@@ -1,10 +1,7 @@
-import { DBMember } from "./../../../../models/member.model";
-import { config } from "@/lib/config";
 import { dbConnect } from "@/lib/mongodb";
 import { LoginCode } from "@/models/loginCode.model";
 import { Member } from "@/models/member.model";
-import { NextAuthOptions, Session, Theme } from "next-auth";
-import { JWT } from "next-auth/jwt";
+import { NextAuthOptions, Session } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions: NextAuthOptions = {

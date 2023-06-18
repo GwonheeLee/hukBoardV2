@@ -9,13 +9,15 @@ import Image from "next/image";
 import Link from "next/link";
 
 // Max Count 8
-const navigation = [{ name: "스케줄", href: "#", isAdmin: false }];
+const navigation = [
+  { name: "스케줄", href: "#", isAdmin: false },
+  { name: "맴버 관리", href: "/admin/member", isAdmin: true },
+];
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { data: session } = useSession();
   const user = session?.user;
-  console.log("유저", user);
   return (
     <header className="bg-white">
       <nav
