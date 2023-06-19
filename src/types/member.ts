@@ -6,13 +6,15 @@ export type AuthUser = {
   isAdmin: boolean;
 };
 
-export type SearchMember = Omit<DBMember, "_id" | "slackUID">;
-export type DBMember = AuthUser & {
+export type SearchMember = AuthUser & {
+  resignDate: string;
+};
+
+export type DBMember = SearchMember & {
   _id: ObjectId;
   workType: string;
   enterDate: string;
   birthDay: string;
   phone: string;
-  resignDate: string;
   slackUID: string;
 };
