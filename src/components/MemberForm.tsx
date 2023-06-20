@@ -5,6 +5,7 @@ import { DBMember } from "@/types/member";
 import { regEmail, regPhone, regShortDate } from "@/utils/regex";
 import { ChangeEvent, FormEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 type Props = {
   member: Omit<DBMember, "_id">;
@@ -18,6 +19,7 @@ export default function MemberForm({
   teamCodeList,
   isNew,
 }: Props) {
+  const router = useRouter();
   const [memberData, setMemberData] = useState(member);
   const [loading, setLoading] = useState(false);
 
@@ -86,6 +88,8 @@ export default function MemberForm({
           window.alert(`${res.status} ${await res.text()}`);
           return;
         }
+        window.alert("성공");
+        router.replace("/admin/member");
       })
 
       .catch((err) => {
@@ -337,6 +341,7 @@ export default function MemberForm({
       <div className="m-6 flex items-center justify-end gap-x-6">
         <button
           type="button"
+          onClick={() => router.push("/admin/member")}
           className="text-sm font-semibold leading-6 text-gray-900"
         >
           Cancel

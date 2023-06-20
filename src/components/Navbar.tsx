@@ -12,6 +12,7 @@ import Link from "next/link";
 const navigation = [
   { name: "스케줄", href: "#", isAdmin: false },
   { name: "맴버 관리", href: "/admin/member", isAdmin: true },
+  { name: "이벤트 모델", href: "/admin/event-model", isAdmin: true },
 ];
 
 export default function Navbar() {
