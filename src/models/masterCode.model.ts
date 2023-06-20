@@ -27,6 +27,7 @@ const masterCodeSchema = new mongoose.Schema<Omit<DBMasterCode, "_id">>(
       type: String,
       required: true,
       trim: true,
+      index: true,
       minlength: 3,
       maxlength: 3,
     },

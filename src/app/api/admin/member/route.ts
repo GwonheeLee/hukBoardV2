@@ -9,11 +9,10 @@ export async function POST(req: NextRequest) {
   const formData: Omit<DBMember, "_id"> = await req.json();
 
   try {
-    const result = await Member.create(formData);
+    await Member.create(formData);
 
     return NextResponse.json("성공");
   } catch (e: any) {
-    console.log(e.message);
     return new Response(e.message, { status: 400 });
   }
 }

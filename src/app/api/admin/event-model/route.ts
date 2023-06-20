@@ -12,7 +12,6 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json("성공");
   } catch (e: any) {
-    console.log(e.message);
     return new Response(e.message, { status: 400 });
   }
 }
