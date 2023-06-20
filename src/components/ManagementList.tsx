@@ -1,10 +1,16 @@
 "use client";
 
-import { Disclosure } from "@headlessui/react";
 import { useState } from "react";
 import Modal from "./Modal";
+import AnnualMember from "./management/AnnualMember";
 
-const modalList = [{ apiUrl: "", description: "", content: <h1>hi</h1> }];
+const modalList = [
+  {
+    apiUrl: "/api/management/annual/member",
+    description: "연차 생성/삭제 - 단일",
+    content: <AnnualMember />,
+  },
+];
 export default function ManagementList() {
   const [selectedContent, setSelectContent] = useState<JSX.Element>();
   return (
@@ -35,30 +41,24 @@ export default function ManagementList() {
               <tbody className="divide-y divide-gray-200 bg-white">
                 {modalList.map((data) => (
                   <>
-                    <Disclosure>
-                      {({ open }) => (
-                        <>
-                          <tr key={data.apiUrl}>
-                            <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                              {data.apiUrl}
-                            </td>
-                            <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                              {data.description}
-                            </td>
-                            <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                              <span
-                                onClick={() => {
-                                  setSelectContent(data.content);
-                                }}
-                                className="cursor-pointer text-indigo-600 hover:text-indigo-900"
-                              >
-                                Action
-                              </span>
-                            </td>
-                          </tr>
-                        </>
-                      )}
-                    </Disclosure>
+                    <tr key={data.apiUrl}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                        {data.apiUrl}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {data.description}
+                      </td>
+                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                        <span
+                          onClick={() => {
+                            setSelectContent(data.content);
+                          }}
+                          className="cursor-pointer text-indigo-600 hover:text-indigo-900"
+                        >
+                          Action
+                        </span>
+                      </td>
+                    </tr>
                   </>
                 ))}
               </tbody>

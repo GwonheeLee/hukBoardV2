@@ -1,5 +1,5 @@
 import { dbConnect } from "@/lib/mongodb";
-import { Annual } from "@/models/annual.model";
+import { Annual, DBAnnual } from "@/models/annual.model";
 import { Member } from "@/models/member.model";
 import { getAnnualOf } from "@/service/annual";
 import { MASTER_CODE_ENUM, getMasterCode } from "@/service/masterCode";
@@ -15,21 +15,72 @@ export async function POST(req: NextRequest) {
     return new Response("올바른 인자 값이 아닙니다.", { status: 400 });
   }
 
-  await dbConnect();
+  try {
+    await dbConnect();
 
-  const member = await Member.findOne<DBMember>({ email });
+    const member = await Member.findOne<DBMember>({ email });
 
-  if (!member || !member.resignDate) {
-    return new Response(`${email}에 해당하는 맴버는 없습니다.`, {
-      status: 400,
-    });
+    if (!member || !member.resignDate) {
+      return new Response(`${email}에 해당하는 맴버는 없습니다.`, {
+        status: 400,
+      });
+    }
+
+    const prevBaseYear = (+baseYear - 1).toString();
+
+    const curAnnual = await getAnnualOf(email, baseYear);
+
+    if (!curAnnual) {
+      return new Response(`${baseYear}에 해당하는 연차가 존재 합니다.`, {
+        status: 400,
+      });
+    }
+
+    const prevAnnual = await getAnnualOf(email, prevBaseYear);
+
+    const newAnnual: Omit<DBAnnual, "_id"> = {
+      baseYear: baseYear,
+      email: email,
+      name: member.name,
+      annualCount: await getAnnualCount(member.enterDate, baseYear),
+      useAnnualCount: 0,
+      prevUseAnnualCount: prevAnnual
+        ? prevAnnual.annualCount -
+            prevAnnual.useAnnualCount -
+            prevAnnual.prevUseAnnualCount >=
+          0
+          ? 0
+          : Math.abs(
+              prevAnnual.annualCount -
+                prevAnnual.useAnnualCount -
+                prevAnnual.prevUseAnnualCount
+            )
+        : 0,
+    };
+
+    await Annual.create(newAnnual);
+    return NextResponse.json("성공");
+  } catch (e: any) {
+    return new Response(e.message, { status: 500 });
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const { email, baseYear }: { email: string; baseYear: string } =
+    await req.json();
+
+  if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
+    return new Response("올바른 인자 값이 아닙니다.", { status: 400 });
   }
 
-  const prevBaseYear = (+baseYear - 1).toString();
+  try {
+    await dbConnect();
 
-  const curAnnual = await getAnnualOf(email, baseYear);
-
-  NextResponse.json("굳");
+    await Annual.deleteOne({ email, baseYear });
+    return NextResponse.json("성공");
+  } catch (e: any) {
+    return new Response(e.message, { status: 500 });
+  }
 }
 
 async function getAnnualCount(enterDate: string, baseYear: string) {
