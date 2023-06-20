@@ -7,33 +7,23 @@ import { useRouter } from "next/navigation";
 import SearchInput from "./SearchInput";
 import { useEffect, useState } from "react";
 
-export default function MemberList() {
+export default function MemberList({
+  memberList,
+}: {
+  memberList: SearchMember[];
+}) {
   const router = useRouter();
-  const { data, isLoading, error } =
-    useSWR<SearchMember[]>(`/api/admin/member`);
 
-  const [members, setMembers] = useState<SearchMember[]>();
-
-  useEffect(() => {
-    setMembers(data);
-  }, [data]);
+  const [members, setMembers] = useState<SearchMember[]>(memberList);
 
   const handleSearchInput = (keyword: string) => {
     if (keyword === "") {
-      setMembers(data);
+      setMembers(memberList);
     } else {
-      const filterMembers = data?.filter((i) => i.name.includes(keyword));
+      const filterMembers = memberList.filter((i) => i.name.includes(keyword));
       setMembers(filterMembers);
     }
   };
-
-  if (isLoading) {
-    return <LoadingSpinner />;
-  }
-
-  if (error) {
-    return <h1>{error}</h1>;
-  }
 
   return (
     <>
@@ -66,6 +56,12 @@ export default function MemberList() {
                       className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
                     >
                       이메일
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900"
+                    >
+                      팀 코드
                     </th>
                     <th
                       scope="col"
@@ -105,6 +101,9 @@ export default function MemberList() {
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {member.email}
+                        </td>
+                        <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                          {member.teamCode}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {!!member.resignDate ? member.resignDate : "재직 중"}

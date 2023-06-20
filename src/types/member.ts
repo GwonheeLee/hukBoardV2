@@ -4,10 +4,11 @@ export type AuthUser = {
   email: string;
   name: string;
   isAdmin: boolean;
+  teamCode: string;
 };
 
 export type SearchMember = AuthUser & {
-  resignDate: string;
+  resignDate?: string | null;
 };
 
 export type DBMember = SearchMember & {

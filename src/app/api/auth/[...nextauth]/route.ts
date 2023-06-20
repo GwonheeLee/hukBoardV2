@@ -37,6 +37,7 @@ export const authOptions: NextAuthOptions = {
         session.user = {
           ...user,
           isAdmin: token.isAdmin,
+          teamCode: token.teamCode,
         };
       }
 
@@ -45,6 +46,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }: { token: any; user: any }) {
       if (user) {
         token.isAdmin = user.isAdmin;
+        token.teamCode = user.teamCode;
       }
       return token;
     },
