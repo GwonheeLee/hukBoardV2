@@ -1,15 +1,14 @@
 import { dbConnect } from "@/lib/mongodb";
-import { Member } from "@/models/member.model";
+import { DBEventModel, EventModel } from "@/models/eventModel.model";
 import { NextRequest, NextResponse } from "next/server";
-import { DBMember } from "@/types/member";
 
 export async function POST(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBMember, "_id"> = await req.json();
+  const formData: Omit<DBEventModel, "_id"> = await req.json();
 
   try {
-    const result = await Member.create(formData);
+    const result = await EventModel.create(formData);
 
     return NextResponse.json("성공");
   } catch (e: any) {
@@ -21,11 +20,11 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBMember, "_id"> = await req.json();
+  const formData: Omit<DBEventModel, "_id"> = await req.json();
 
   try {
-    await Member.findOneAndUpdate(
-      { email: formData.email },
+    await EventModel.findOneAndUpdate(
+      { eventCode: formData.eventCode },
       {
         $set: { ...formData },
       }
