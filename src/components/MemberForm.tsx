@@ -2,7 +2,9 @@
 
 import { MasterCodeT } from "@/models/masterCode.model";
 import { DBMember } from "@/types/member";
-import { ChangeEvent, useState } from "react";
+import { regEmail, regPhone, regShortDate } from "@/utils/regex";
+import { ChangeEvent, FormEvent, useState } from "react";
+import LoadingSpinner from "./LoadingSpinner";
 
 type Props = {
   member: Omit<DBMember, "_id">;
@@ -17,9 +19,15 @@ export default function MemberForm({
   isNew,
 }: Props) {
   const [memberData, setMemberData] = useState(member);
+  const [loading, setLoading] = useState(false);
 
-  const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setMemberData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleInputSelectBoxChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setMemberData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value.trim(),
+    }));
   };
   const handleRadioChange = (e: ChangeEvent<HTMLInputElement>) => {
     switch (e.target.name) {
@@ -31,10 +39,68 @@ export default function MemberForm({
         break;
     }
   };
-  const handleSelectChange = (e: ChangeEvent<HTMLSelectElement>) => {};
+
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // validation
+
+    if (!memberData.email || regEmail.test(memberData.email) === false) {
+      window.alert("이메일 형식이 맞지 않습니다.");
+      return;
+    }
+
+    if (!memberData.name) {
+      window.alert("이름은 필수 값 입니다.");
+      return;
+    }
+
+    if (!memberData.phone || regPhone.test(memberData.phone) === false) {
+      window.alert("연락처 형식이 맞지 않습니다.");
+      return;
+    }
+
+    if (
+      !memberData.enterDate ||
+      regShortDate.test(memberData.enterDate) === false
+    ) {
+      window.alert("입사일 형식이 맞지 않습니다.");
+      return;
+    }
+
+    if (
+      !memberData.birthDay ||
+      regShortDate.test(memberData.birthDay) === false
+    ) {
+      window.alert("생일 형식이 맞지 않습니다.");
+      return;
+    }
+
+    setLoading(true);
+
+    fetch("/api/admin/member", {
+      method: isNew ? "POST" : "PUT",
+      body: JSON.stringify(memberData),
+    })
+      .then(async (res) => {
+        if (!res.ok) {
+          window.alert(`${res.status} ${await res.text()}`);
+          return;
+        }
+      })
+
+      .catch((err) => {
+        window.alert(err.toString());
+      })
+
+      .finally(() => setLoading(false));
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
-    <form>
+    <form onSubmit={handleSubmit}>
       <div className="m-4 space-y-12 sm:space-y-16">
         <div className="mt-10 space-y-8 border-b border-gray-900/10 pb-12 sm:space-y-0 sm:divide-y sm:divide-gray-900/10 sm:border-t sm:pb-0">
           <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
@@ -50,7 +116,7 @@ export default function MemberForm({
                 name="email"
                 id="email"
                 value={memberData.email}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 readOnly={!isNew}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-md sm:text-sm sm:leading-6"
               />
@@ -70,7 +136,7 @@ export default function MemberForm({
                 name="name"
                 id="name"
                 value={memberData.name}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>
@@ -89,7 +155,7 @@ export default function MemberForm({
                 name="slackUID"
                 id="slackUID"
                 value={memberData.slackUID}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>
@@ -108,7 +174,8 @@ export default function MemberForm({
                 name="phone"
                 type="phone"
                 value={memberData.phone}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
+                placeholder="010-0000-0000"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-md sm:text-sm sm:leading-6"
               />
             </div>
@@ -127,6 +194,7 @@ export default function MemberForm({
                 name="workType"
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                 value={memberData.workType}
+                onChange={handleInputSelectBoxChange}
               >
                 {workTypeList.map((w) => (
                   <option key={w.code} value={w.code}>
@@ -149,6 +217,7 @@ export default function MemberForm({
                 id="teamCode"
                 name="teamCode"
                 value={memberData.teamCode}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               >
                 {teamCodeList.map((w) => (
@@ -173,7 +242,7 @@ export default function MemberForm({
                 id="enterDate"
                 name="enterDate"
                 value={memberData.enterDate}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>
@@ -192,7 +261,7 @@ export default function MemberForm({
                 id="birthDay"
                 name="birthDay"
                 value={memberData.birthDay}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>
@@ -211,7 +280,7 @@ export default function MemberForm({
                 id="resignDate"
                 name="resignDate"
                 value={memberData.resignDate ?? ""}
-                onChange={handleInputChange}
+                onChange={handleInputSelectBoxChange}
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               />
             </div>

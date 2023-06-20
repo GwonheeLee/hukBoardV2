@@ -34,7 +34,10 @@ export default function MemberList({
           inputType={"search"}
           onClick={handleSearchInput}
         />
-        <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+        <button
+          onClick={() => router.push("./member/new")}
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+        >
           등록
         </button>
       </div>

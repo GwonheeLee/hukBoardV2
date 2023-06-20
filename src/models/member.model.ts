@@ -37,8 +37,6 @@ const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>(
       required: false,
       default: "",
       trim: true,
-      index: true,
-      unique: true,
     },
   },
   {
