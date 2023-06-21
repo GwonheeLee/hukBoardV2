@@ -2,7 +2,7 @@ import { dbConnect } from "@/lib/mongodb";
 import { Annual, DBAnnual } from "@/models/annual.model";
 import { Member } from "@/models/member.model";
 import { getAnnualOf } from "@/service/annual";
-import { MASTER_CODE_ENUM, getMasterCode } from "@/service/masterCode";
+import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { DBMember } from "@/types/member";
 import { regEmail, regYear } from "@/utils/regex";
 import { NextRequest, NextResponse } from "next/server";
@@ -101,7 +101,7 @@ async function getAnnualCount(enterDate: string, baseYear: string) {
     return 11 - date.getMonth();
   }
 
-  const annualMasterCodeList = await getMasterCode(MASTER_CODE_ENUM.연차수량);
+  const annualMasterCodeList = await getMasterCodeOf(MASTER_CODE_ENUM.연차수량);
 
   const yearDiff = +baseYear - date.getFullYear();
 

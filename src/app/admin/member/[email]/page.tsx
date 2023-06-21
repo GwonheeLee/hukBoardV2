@@ -1,5 +1,5 @@
 import MemberForm from "@/components/MemberForm";
-import { MASTER_CODE_ENUM, getMasterCode } from "@/service/masterCode";
+import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { getMember } from "@/service/member";
 import { DBMember } from "@/types/member";
 
@@ -10,8 +10,8 @@ type Props = {
 };
 
 export default async function MemberDetailPage({ params: { email } }: Props) {
-  const workTypeList = await getMasterCode(MASTER_CODE_ENUM.WORK_TYPE);
-  const teamCodeList = await getMasterCode(MASTER_CODE_ENUM.TEAM_CODE);
+  const workTypeList = await getMasterCodeOf(MASTER_CODE_ENUM.WORK_TYPE);
+  const teamCodeList = await getMasterCodeOf(MASTER_CODE_ENUM.TEAM_CODE);
 
   let member;
   let isNew = false;
