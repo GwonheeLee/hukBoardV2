@@ -1,4 +1,7 @@
+import { getCalendar } from "@/utils/calendar";
+
 export default function Home() {
+  getCalendar("2023-06-22");
   return (
     <section>
       <div className="mx-auto max-w-7xl px-6 py-32 text-center sm:py-40 lg:px-8">
