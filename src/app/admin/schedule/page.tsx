@@ -2,8 +2,9 @@ import { getCalendar } from "@/utils/calendar";
 
 export default function SchedulePage() {
   const calendar = getCalendar(new Date());
+
   return (
-    <div className="flex-auto flex-col shadow ring-1 ring-black ring-opacity-5  ">
+    <div className="flex-auto mt-4  shadow ring-1 ring-black ring-opacity-5  ">
       <div className=" grid grid-cols-7 gap-px border-b border-gray-300 bg-gray-200 text-center text-xs font-semibold leading-6 text-gray-700 ">
         <div className="bg-white py-2 text-main-color">일요일</div>
         <div className="bg-white py-2">월요일</div>
