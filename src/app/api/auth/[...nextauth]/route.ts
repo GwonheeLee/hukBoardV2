@@ -1,7 +1,7 @@
 import { dbConnect } from "@/lib/mongodb";
 import { LoginCode } from "@/models/loginCode.model";
 import { Member } from "@/models/member.model";
-import { NextAuthOptions, Session } from "next-auth";
+import { NextAuthOptions, Session, User } from "next-auth";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
 export const authOptions: NextAuthOptions = {
@@ -21,7 +21,21 @@ export const authOptions: NextAuthOptions = {
         const loginCode = await LoginCode.findOne({ email: email });
 
         if (loginCode && code === loginCode.code) {
-          const member = await Member.findOne({ email: email });
+          const diffSecond = parseInt(
+            (
+              (new Date().getTime() - new Date(loginCode.updatedAt).getTime()) /
+              1000
+            ).toString()
+          );
+          // 로그인코드가 30분 지난 코드면 invalid
+          if (diffSecond > 30 * 60) {
+            return null;
+          }
+          const member = await Member.findOne({
+            email: email,
+            resignDate: null,
+          }).select("email name workType teamCode isAdmin slackUID");
+
           return member;
         }
 
@@ -30,23 +44,26 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, token }: { session: Session; token: any }) {
+    async session({ session, token }) {
       const user = session.user;
-
       if (user) {
         session.user = {
           ...user,
           isAdmin: token.isAdmin,
           teamCode: token.teamCode,
+          workType: token.workType,
+          slackUID: token.slackUID,
         };
       }
 
       return session;
     },
-    async jwt({ token, user }: { token: any; user: any }) {
+    async jwt({ token, user }) {
       if (user) {
         token.isAdmin = user.isAdmin;
         token.teamCode = user.teamCode;
+        token.workType = user.workType;
+        token.slackUID = user.slackUID;
       }
       return token;
     },
