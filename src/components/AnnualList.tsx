@@ -1,27 +1,43 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import SearchInput from "./SearchInput";
 import { DBAnnual } from "@/models/annual.model";
+import { useState } from "react";
+import useSWR from "swr";
+import LoadingSpinner from "./LoadingSpinner";
+import Modal from "./Modal";
+import AnnualFormModal from "./AnnualFormModal";
 
-type Props = {
-  annualList: Omit<DBAnnual, "_id">[];
-};
-export default function AnnualList({ annualList }: Props) {
-  const router = useRouter();
+export default function AnnualList() {
+  const [baseYear, setBaseYear] = useState(new Date().getFullYear().toString());
+  const [selectedAnnual, setSelectedAnnual] = useState<Omit<DBAnnual, "_id">>();
+  const { data: annualList, isLoading } = useSWR<Omit<DBAnnual, "_id">[]>(
+    `/api/admin/annual/${baseYear}`
+  );
 
+  if (isLoading) {
+    return <LoadingSpinner />;
+  }
   return (
     <>
       <div className="flex justify-end space-x-4 mt-4  sm:ml-16 sm:flex-none">
-        <SearchInput placeholder="Name" inputId="name" inputType={"search"} />
         <div className="flex items-baseline">
-          <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+          <button
+            onClick={() => {
+              setBaseYear((prev) => (+prev - 1).toString());
+            }}
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
             ◀
           </button>
           <span className="rounded-md border border-gray-300 bg-white px-4 py-2 ">
-            2023
+            {baseYear}
           </span>
-          <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+          <button
+            onClick={() => {
+              setBaseYear((prev) => (+prev + 1).toString());
+            }}
+            className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+          >
             ▶
           </button>
         </div>
@@ -68,7 +84,7 @@ export default function AnnualList({ annualList }: Props) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {!annualList.length ? (
+                  {!annualList || annualList.length === 0 ? (
                     <tr>
                       <td
                         colSpan={9}
@@ -96,9 +112,7 @@ export default function AnnualList({ annualList }: Props) {
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                           <button
                             className="text-pink-400 hover:text-pink-800"
-                            onClick={() =>
-                              router.push(`./member/${annual.email}`)
-                            }
+                            onClick={() => setSelectedAnnual(annual)}
                           >
                             Edit
                           </button>
@@ -111,6 +125,15 @@ export default function AnnualList({ annualList }: Props) {
             </div>
           </div>
         </div>
+        {selectedAnnual && (
+          <Modal
+            content={<AnnualFormModal annual={selectedAnnual} />}
+            open={!!selectedAnnual}
+            setOpen={() => {
+              setSelectedAnnual(undefined);
+            }}
+          />
+        )}
       </div>
     </>
   );

@@ -23,3 +23,14 @@ export async function getAnnualOf(email: string, baseYear: string) {
 
   return Annual.findOne({ baseYear, email }).lean<Omit<DBAnnual, "_id">>();
 }
+
+export async function updateAnnual(annual: Omit<DBAnnual, "_id">) {
+  await dbConnect();
+
+  return Annual.findOneAndUpdate(
+    { baseYear: annual.baseYear, email: annual.email },
+    {
+      $set: { ...annual },
+    }
+  );
+}

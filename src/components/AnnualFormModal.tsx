@@ -1,17 +1,14 @@
 "use client";
-import { RadioGroup } from "@headlessui/react";
 import { ChangeEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-import { DBMasterCode } from "@/models/masterCode.model";
+import { DBAnnual } from "@/models/annual.model";
 
 type Props = {
-  masterCode: Omit<DBMasterCode, "_id">;
+  annual: Omit<DBAnnual, "_id">;
 };
-export default function MasterCodeFormModal({ masterCode }: Props) {
-  const [dataForm, setDataForm] = useState(masterCode);
+export default function AnnualFormModal({ annual }: Props) {
+  const [dataForm, setDataForm] = useState(annual);
   const [loading, setLoading] = useState(false);
-
-  const isNew = !masterCode.code;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     setDataForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -20,8 +17,8 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
   const handleClick = () => {
     setLoading(true);
 
-    fetch(`/api/admin/management/masterCode`, {
-      method: isNew ? "POST" : "PUT",
+    fetch(`/api/admin/annual`, {
+      method: "PUT",
       body: JSON.stringify(dataForm),
     })
       .then(async (res) => {
@@ -47,26 +44,26 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
     <>
       <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
         <h3 className="text-lg font-medium leading-6 text-gray-900">
-          마스터 코드
+          연차 조정
         </h3>
       </div>
 
       <div className="border-b border-gray-200 bg-white px-4  sm:px-6">
         <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
           <label
-            htmlFor="code"
+            htmlFor="email"
             className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
           >
-            Code
+            이메일
           </label>
           <div className="mt-2 sm:col-span-2 sm:mt-0">
             <input
-              type="text"
-              name="code"
-              id="code"
-              value={dataForm.code}
+              type="email"
+              name="email"
+              id="email"
+              value={dataForm.email}
               onChange={handleChange}
-              readOnly={!isNew}
+              readOnly={true}
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
             />
           </div>
@@ -76,38 +73,17 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
       <div className="border-b border-gray-200 bg-white px-4 sm:px-6">
         <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
           <label
-            htmlFor="masterCode"
+            htmlFor="name"
             className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
           >
-            masterCode
+            이름
           </label>
           <div className="mt-2 sm:col-span-2 sm:mt-0">
             <input
               type="text"
-              name="masterCode"
-              id="masterCode"
-              value={dataForm.masterCode}
-              onChange={handleChange}
-              className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="border-b border-gray-200 bg-white px-4 sm:px-6">
-        <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
-          >
-            description
-          </label>
-          <div className="mt-2 sm:col-span-2 sm:mt-0">
-            <input
-              type="text"
-              name="description"
-              id="description"
-              value={dataForm.description}
+              name="name"
+              id="name"
+              value={dataForm.name}
               onChange={handleChange}
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
             />
@@ -118,17 +94,17 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
       <div className="border-b border-gray-200 bg-white px-4 sm:px-6">
         <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
           <label
-            htmlFor="codeValue"
+            htmlFor="annualCount"
             className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
           >
-            codeValue
+            연차 수량
           </label>
           <div className="mt-2 sm:col-span-2 sm:mt-0">
             <input
-              type="text"
-              name="codeValue"
-              id="codeValue"
-              value={dataForm.codeValue}
+              type="number"
+              name="annualCount"
+              id="annualCount"
+              value={dataForm.annualCount}
               onChange={handleChange}
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
             />
@@ -139,17 +115,17 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
       <div className="border-b border-gray-200 bg-white px-4 sm:px-6">
         <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
           <label
-            htmlFor="codeSubValue"
+            htmlFor="useAnnualCount"
             className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
           >
-            codeSubValue
+            사용량
           </label>
           <div className="mt-2 sm:col-span-2 sm:mt-0">
             <input
-              type="text"
-              name="codeSubValue"
-              id="codeSubValue"
-              value={dataForm.codeSubValue}
+              type="number"
+              name="useAnnualCount"
+              id="useAnnualCount"
+              value={dataForm.useAnnualCount}
               onChange={handleChange}
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
             />
@@ -157,47 +133,27 @@ export default function MasterCodeFormModal({ masterCode }: Props) {
         </div>
       </div>
 
-      <RadioGroup
-        value={dataForm.isUse}
-        onChange={(e) => {
-          setDataForm((prev) => ({ ...prev, isUse: e }));
-        }}
-        className="border-b border-gray-200 bg-white px-4 sm:px-6"
-      >
+      <div className="border-b border-gray-200 bg-white px-4 sm:px-6">
         <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-          <RadioGroup.Label className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5">
-            사용 여부
-          </RadioGroup.Label>
-          <RadioGroup.Option value={true}>
-            {({ checked }) => (
-              <label className="flex items-center space-x-2">
-                <div
-                  className={`w-4 h-4  rounded-full border border-gray-300 ${
-                    checked ? "bg-main-color" : "bg-white"
-                  }`}
-                ></div>
-                <span className="ml-3 block text-sm font-medium leading-6 text-gray-900">
-                  사용
-                </span>
-              </label>
-            )}
-          </RadioGroup.Option>
-          <RadioGroup.Option value={false}>
-            {({ checked }) => (
-              <label className="flex items-center space-x-2">
-                <div
-                  className={`w-4 h-4  rounded-full border border-gray-300 ${
-                    checked ? "bg-main-color" : "bg-white"
-                  }`}
-                ></div>
-                <span className="ml-3 block text-sm font-medium leading-6 text-gray-900">
-                  미사용
-                </span>
-              </label>
-            )}
-          </RadioGroup.Option>
+          <label
+            htmlFor="prevUseAnnualCount"
+            className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
+          >
+            작년 초과분
+          </label>
+          <div className="mt-2 sm:col-span-2 sm:mt-0">
+            <input
+              type="number"
+              name="prevUseAnnualCount"
+              id="prevUseAnnualCount"
+              value={dataForm.prevUseAnnualCount}
+              onChange={handleChange}
+              className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+            />
+          </div>
         </div>
-      </RadioGroup>
+      </div>
+
       <button
         onClick={handleClick}
         className="mt-10  w-full !text-main-color !border-main-color justify-center"
