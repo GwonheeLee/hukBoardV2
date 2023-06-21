@@ -4,9 +4,8 @@ import { RadioGroup } from "@headlessui/react";
 import { ChangeEvent, useState } from "react";
 import LoadingSpinner from "../LoadingSpinner";
 
-export default function AnnualMember() {
+export default function AnnualMembers() {
   const [dataForm, setDataForm] = useState({
-    email: "",
     baseYear: "",
     methodOption: true,
   });
@@ -17,11 +16,6 @@ export default function AnnualMember() {
   };
 
   const handleClick = () => {
-    if (!dataForm.email || regEmail.test(dataForm.email) === false) {
-      window.alert("이메일 형식이 안 맞습니다.");
-      return;
-    }
-
     if (!dataForm.baseYear || regYear.test(dataForm.baseYear) === false) {
       window.alert("기준일 형식이 안 맞습니다.");
       return;
@@ -31,11 +25,10 @@ export default function AnnualMember() {
 
     // nextjs 13 에서 delete의 body json 버그가 존재함
     fetch(
-      `/api/admin/management/annual/member?email=${dataForm.email}&baseYear=${dataForm.baseYear}`,
+      `/api/admin/management/annual/members?baseYear=${dataForm.baseYear}`,
       {
         method: dataForm.methodOption ? "POST" : "DELETE",
         body: JSON.stringify({
-          email: dataForm.email,
           baseYear: dataForm.baseYear,
         }),
       }
@@ -61,29 +54,8 @@ export default function AnnualMember() {
     <>
       <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
         <h3 className="text-lg font-medium leading-6 text-gray-900">
-          연차 생성/삭제 - 단일
+          연차 생성/삭제 - 전 사원
         </h3>
-      </div>
-
-      <div className="border-b border-gray-200 bg-white px-4  sm:px-6">
-        <div className="sm:grid sm:grid-cols-3 sm:items-start sm:gap-4 sm:py-6">
-          <label
-            htmlFor="email"
-            className="block text-sm font-medium leading-6 text-gray-900 sm:pt-1.5"
-          >
-            Email
-          </label>
-          <div className="mt-2 sm:col-span-2 sm:mt-0">
-            <input
-              type="email"
-              name="email"
-              id="email"
-              value={dataForm.email}
-              onChange={handleChange}
-              className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
-            />
-          </div>
-        </div>
       </div>
 
       <div className="border-b border-gray-200 bg-white px-4 sm:px-6">

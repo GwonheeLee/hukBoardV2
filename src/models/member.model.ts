@@ -1,5 +1,5 @@
 import { DBMember } from "@/types/member";
-import { regEmail, regPhone } from "@/utils/regex";
+import { regEmail, regPhone, regShortDate } from "@/utils/regex";
 import mongoose, { model } from "mongoose";
 
 const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>(
@@ -27,11 +27,21 @@ const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>(
       minlength: 6,
       maxlength: 6,
     },
-    enterDate: { type: String, required: true, trim: true },
-    birthDay: { type: String, required: true, trim: true },
+    enterDate: {
+      type: String,
+      required: true,
+      trim: true,
+      match: regShortDate,
+    },
+    birthDay: { type: String, required: true, trim: true, match: regShortDate },
     phone: { type: String, required: true, trim: true, match: regPhone },
     isAdmin: { type: Boolean, required: true },
-    resignDate: { type: String, required: false, default: null },
+    resignDate: {
+      type: String,
+      required: false,
+      default: null,
+      match: regShortDate,
+    },
     slackUID: {
       type: String,
       required: false,

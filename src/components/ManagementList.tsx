@@ -3,12 +3,17 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import AnnualMember from "./management/AnnualMember";
-
+import AnnualMembers from "./management/AnnualMembers";
 const modalList = [
   {
-    apiUrl: "/api/management/annual/member",
+    apiUrl: "/api/admin/management/annual/member",
     description: "연차 생성/삭제 - 단일",
     content: <AnnualMember />,
+  },
+  {
+    apiUrl: "/api/admin/management/annual/members",
+    description: "연차 생성/삭제 - 전 사원",
+    content: <AnnualMembers />,
   },
 ];
 export default function ManagementList() {
@@ -40,26 +45,24 @@ export default function ManagementList() {
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
                 {modalList.map((data) => (
-                  <>
-                    <tr key={data.apiUrl}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {data.apiUrl}
-                      </td>
-                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {data.description}
-                      </td>
-                      <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                        <span
-                          onClick={() => {
-                            setSelectContent(data.content);
-                          }}
-                          className="cursor-pointer text-indigo-600 hover:text-indigo-900"
-                        >
-                          Action
-                        </span>
-                      </td>
-                    </tr>
-                  </>
+                  <tr key={data.apiUrl}>
+                    <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      {data.apiUrl}
+                    </td>
+                    <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      {data.description}
+                    </td>
+                    <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <span
+                        onClick={() => {
+                          setSelectContent(data.content);
+                        }}
+                        className="cursor-pointer text-indigo-600 hover:text-indigo-900"
+                      >
+                        Action
+                      </span>
+                    </td>
+                  </tr>
                 ))}
               </tbody>
             </table>

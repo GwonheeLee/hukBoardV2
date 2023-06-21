@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
 
     const member = await Member.findOne<DBMember>({ email });
 
-    if (!member || !member.resignDate) {
+    if (!member || !!member.resignDate) {
       return new Response(`${email}에 해당하는 맴버는 없습니다.`, {
         status: 400,
       });
@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
     const curAnnual = await getAnnualOf(email, baseYear);
 
-    if (!curAnnual) {
+    if (curAnnual) {
       return new Response(`${baseYear}에 해당하는 연차가 존재 합니다.`, {
         status: 400,
       });
@@ -66,10 +66,20 @@ export async function POST(req: NextRequest) {
 }
 
 export async function DELETE(req: NextRequest) {
-  const { email, baseYear }: { email: string; baseYear: string } =
-    await req.json();
+  // nextjs 13 에서 delete의 body json 버그가 존재함
+  const { searchParams } = new URL(req.url);
+  const email = searchParams.get("email");
+  const baseYear = searchParams.get("baseYear");
 
-  if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
+  // const { email, baseYear }: { email: string; baseYear: string } =
+  //   await req.json();
+
+  if (
+    !email ||
+    !baseYear ||
+    regEmail.test(email) === false ||
+    regYear.test(baseYear) === false
+  ) {
     return new Response("올바른 인자 값이 아닙니다.", { status: 400 });
   }
 
