@@ -18,5 +18,8 @@ export async function getMasterCodeOf(masterCode: MASTER_CODE_ENUM) {
 export async function getMasterCodeList() {
   await dbConnect();
 
-  return MasterCode.find<DBMasterCode>().select("-_id -createdAt -updatedAt");
+  return MasterCode.find<DBMasterCode>()
+    .select("-_id -createdAt -updatedAt")
+    .sort({ masterCode: "asc" })
+    .lean();
 }
