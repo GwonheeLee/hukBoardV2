@@ -7,6 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   await dbConnect();
+
   const { email } = await req.json();
   const result = await isExistMember(email);
 

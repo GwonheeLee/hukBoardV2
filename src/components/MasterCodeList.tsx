@@ -6,9 +6,9 @@ import { DBMasterCode } from "@/models/masterCode.model";
 import MasterCodeFormModal from "./MasterCodeFormModal";
 
 type Props = {
-  masterCodeList: Omit<DBMasterCode, "_id">[];
+  masterCodeList: DBMasterCode[];
 };
-const initMasterCode: Omit<DBMasterCode, "_id"> = {
+const initMasterCode: DBMasterCode = {
   code: "",
   masterCode: "",
   description: "",
@@ -18,7 +18,7 @@ const initMasterCode: Omit<DBMasterCode, "_id"> = {
 };
 export default function MasetCodeList({ masterCodeList }: Props) {
   const [selectedMasterCode, setSelectedMasterCode] =
-    useState<Omit<DBMasterCode, "_id">>();
+    useState<typeof initMasterCode>();
   return (
     <div className="mt-8 flex flex-col">
       <div className="flex justify-end space-x-4 my-4  sm:ml-16 sm:flex-none">

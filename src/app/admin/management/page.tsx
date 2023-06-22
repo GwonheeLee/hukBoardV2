@@ -4,6 +4,7 @@ import { getMasterCode } from "@/service/masterCode";
 
 export default async function ManagementPage() {
   const masterCodeList = await getMasterCode();
+
   return (
     <section className="w-full">
       <ManagementList />

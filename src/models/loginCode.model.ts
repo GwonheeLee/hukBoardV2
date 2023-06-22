@@ -1,7 +1,11 @@
 import { regEmail } from "@/utils/regex";
-import mongoose, { InferSchemaType, Model, model } from "mongoose";
+import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 
-const loginCodeSchema = new mongoose.Schema(
+export type DBLoginCode = {
+  email: string;
+  code: string;
+};
+const loginCodeSchema = new mongoose.Schema<DBLoginCode & Document>(
   {
     email: {
       type: String,
@@ -20,11 +24,9 @@ const loginCodeSchema = new mongoose.Schema(
   { versionKey: false, timestamps: true }
 );
 
-loginCodeSchema.set("toJSON", { getters: true });
-loginCodeSchema.set("toObject", { getters: true });
-const LoginCode: Model<DBLoginCode> =
-  mongoose.models.LoginCode || model("LoginCode", loginCodeSchema);
+export type ILoginCode = InferSchemaType<typeof loginCodeSchema>;
 
-export type DBLoginCode = InferSchemaType<typeof loginCodeSchema>;
+const LoginCode: Model<ILoginCode> =
+  mongoose.models.LoginCode || model("LoginCode", loginCodeSchema);
 
 export { LoginCode };

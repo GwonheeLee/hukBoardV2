@@ -5,7 +5,7 @@ import LoadingSpinner from "./LoadingSpinner";
 import { DBMasterCode } from "@/models/masterCode.model";
 
 type Props = {
-  masterCode: Omit<DBMasterCode, "_id">;
+  masterCode: DBMasterCode;
 };
 export default function MasterCodeFormModal({ masterCode }: Props) {
   const [dataForm, setDataForm] = useState(masterCode);

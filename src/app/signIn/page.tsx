@@ -3,11 +3,9 @@ import Image from "next/image";
 
 export default function LoginPage() {
   return (
-    <div className="flex min-h-full flex-col justify-center mt-24 sm:px-6 lg:px-8">
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <LoginForm />
-        </div>
+    <div className="flex min-h-full mt-24  max-w-lg flex-col justify-center sm:w-2/4 ">
+      <div className="bg-white py-12 px-10 shadow sm:rounded-lg">
+        <LoginForm />
       </div>
     </div>
   );

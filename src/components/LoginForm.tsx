@@ -32,11 +32,11 @@ export default function EmailCheckForm() {
     } else if (step === LoginStep.STEP2) {
       signIn("credentials", { redirect: false, email, code: loginCode }).then(
         (res) => {
-          setLoading(false);
           if (!res?.error) {
             router.replace("/");
           } else {
             window.alert(res?.error);
+            setLoading(false);
           }
         }
       );

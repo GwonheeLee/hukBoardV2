@@ -1,7 +1,6 @@
-import mongoose, { ObjectId, model } from "mongoose";
+import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 
 export type DBMasterCode = {
-  _id: ObjectId;
   code: string;
   masterCode: string;
   description: string;
@@ -10,9 +9,7 @@ export type DBMasterCode = {
   isUse: boolean;
 };
 
-export type MasterCodeT = Omit<DBMasterCode, "_id" | "isUse">;
-
-const masterCodeSchema = new mongoose.Schema<Omit<DBMasterCode, "_id">>(
+const masterCodeSchema = new mongoose.Schema<DBMasterCode & Document>(
   {
     code: {
       type: String,
@@ -56,7 +53,9 @@ const masterCodeSchema = new mongoose.Schema<Omit<DBMasterCode, "_id">>(
   }
 );
 
-const MasterCode =
+export type IMasterCode = InferSchemaType<typeof masterCodeSchema>;
+
+const MasterCode: Model<IMasterCode> =
   mongoose.models.MasterCode || model("MasterCode", masterCodeSchema);
 
 export { MasterCode };
