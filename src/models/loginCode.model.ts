@@ -3,7 +3,7 @@ import mongoose, { InferSchemaType, Model, model } from "mongoose";
 
 const loginCodeSchema = new mongoose.Schema(
   {
-    _id: {
+    email: {
       type: String,
       required: true,
       index: true,
@@ -17,29 +17,14 @@ const loginCodeSchema = new mongoose.Schema(
       trim: true,
     },
   },
-  {
-    virtuals: {
-      email: {
-        get() {
-          return this._id;
-        },
-        set(email) {
-          this._id = email;
-        },
-      },
-    },
-    _id: false,
-    versionKey: false,
-    timestamps: true,
-  }
+  { versionKey: false, timestamps: true }
 );
 
-export type DBLoginCode = InferSchemaType<typeof loginCodeSchema> & {
-  email: string;
-  updatedAt: NativeDate;
-};
-
+loginCodeSchema.set("toJSON", { getters: true });
+loginCodeSchema.set("toObject", { getters: true });
 const LoginCode: Model<DBLoginCode> =
   mongoose.models.LoginCode || model("LoginCode", loginCodeSchema);
+
+export type DBLoginCode = InferSchemaType<typeof loginCodeSchema>;
 
 export { LoginCode };
