@@ -17,8 +17,7 @@ const initMasterCode: DBMasterCode = {
   isUse: true,
 };
 export default function MasetCodeList({ masterCodeList }: Props) {
-  const [selectedMasterCode, setSelectedMasterCode] =
-    useState<typeof initMasterCode>();
+  const [selectedMasterCode, setSelectedMasterCode] = useState<DBMasterCode>();
   return (
     <div className="mt-8 flex flex-col">
       <div className="flex justify-end space-x-4 my-4  sm:ml-16 sm:flex-none">

@@ -1,5 +1,5 @@
 import { dbConnect } from "@/lib/mongodb";
-import { MasterCode } from "@/models/masterCode.model";
+import { DBMasterCode, MasterCode } from "@/models/masterCode.model";
 
 export enum MASTER_CODE_ENUM {
   WORK_TYPE = "H01",
@@ -9,13 +9,14 @@ export enum MASTER_CODE_ENUM {
 export async function getMasterCodeOf(masterCode: MASTER_CODE_ENUM) {
   await dbConnect();
 
-  return MasterCode.find({ masterCode: masterCode, isUse: true })
-    .select("-_id -createdAt -updatedAt -isUse")
-    .lean();
+  return MasterCode.find<DBMasterCode>({
+    masterCode: masterCode,
+    isUse: true,
+  }).select("-_id -createdAt -updatedAt");
 }
 
-export async function getMasterCode() {
+export async function getMasterCodeList() {
   await dbConnect();
 
-  return MasterCode.find().select("-_id -createdAt -updatedAt");
+  return MasterCode.find<DBMasterCode>().select("-_id -createdAt -updatedAt");
 }
