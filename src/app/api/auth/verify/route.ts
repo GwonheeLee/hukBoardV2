@@ -17,8 +17,8 @@ export async function POST(req: NextRequest) {
   const loginCode = getRandomCode();
   console.log("로그인 코드", loginCode);
 
-  await LoginCode.findOneAndUpdate(
-    { email },
+  await LoginCode.findByIdAndUpdate(
+    email,
     { $set: { code: loginCode } },
     { upsert: true }
   );

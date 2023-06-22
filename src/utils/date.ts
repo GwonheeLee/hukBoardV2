@@ -9,7 +9,17 @@ export class DateObject {
       this._date = tempDate;
     }
   }
+  static getBetweenDate(startDate: string, endDate: string) {
+    const dates = [];
+    const start = new Date(startDate);
+    const end = new Date(endDate);
 
+    for (let i = start; i <= end; i.setDate(i.getDate() + 1)) {
+      dates.push(i.toISOString().split("T")[0]);
+    }
+
+    return dates;
+  }
   getThisDate() {
     return this._date;
   }

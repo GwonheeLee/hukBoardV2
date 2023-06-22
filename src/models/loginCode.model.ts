@@ -1,15 +1,9 @@
 import { regEmail } from "@/utils/regex";
-import mongoose, { ObjectId, model } from "mongoose";
+import mongoose, { InferSchemaType, Model, model } from "mongoose";
 
-export type DBLoginCode = {
-  _id: ObjectId;
-  email: string;
-  code: string;
-};
-
-const loginCodeSchema = new mongoose.Schema<Omit<DBLoginCode, "_id">>(
+const loginCodeSchema = new mongoose.Schema(
   {
-    email: {
+    _id: {
       type: String,
       required: true,
       index: true,
@@ -24,12 +18,28 @@ const loginCodeSchema = new mongoose.Schema<Omit<DBLoginCode, "_id">>(
     },
   },
   {
+    virtuals: {
+      email: {
+        get() {
+          return this._id;
+        },
+        set(email) {
+          this._id = email;
+        },
+      },
+    },
+    _id: false,
     versionKey: false,
     timestamps: true,
   }
 );
 
-const LoginCode =
+export type DBLoginCode = InferSchemaType<typeof loginCodeSchema> & {
+  email: string;
+  updatedAt: NativeDate;
+};
+
+const LoginCode: Model<DBLoginCode> =
   mongoose.models.LoginCode || model("LoginCode", loginCodeSchema);
 
 export { LoginCode };
