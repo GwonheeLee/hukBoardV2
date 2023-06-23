@@ -1,4 +1,4 @@
-import mongoose, { InferSchemaType, Model, model } from "mongoose";
+import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 
 export type DBEventModel = {
   eventCode: string;
@@ -9,7 +9,7 @@ export type DBEventModel = {
   isUse: boolean;
 };
 
-const eventModelSchema = new mongoose.Schema<Omit<DBEventModel, "_id">>(
+const eventModelSchema = new mongoose.Schema<DBEventModel & Document>(
   {
     eventCode: {
       type: String,

@@ -26,7 +26,7 @@ export async function getAnnualOf(email: string, baseYear: string) {
 
   await dbConnect();
 
-  return Annual.findOne({ baseYear, email });
+  return Annual.findOne({ baseYear, email }).lean();
 }
 
 export async function updateAnnual(annual: DBAnnual) {
@@ -34,5 +34,5 @@ export async function updateAnnual(annual: DBAnnual) {
 
   return Annual.findByIdAndUpdate(annual.id, {
     $set: { ...annual },
-  });
+  }).lean();
 }

@@ -9,8 +9,8 @@ export type SearchEventModel = {
 
 export async function getEventModelList() {
   await dbConnect();
-  return EventModel.find()
-    .select("-_id -createdAt -updatedAt eventCode name isUse")
+  return EventModel.find({})
+    .select("eventCode name isUse -_id")
     .sort({ eventCode: "asc" })
     .lean();
 }

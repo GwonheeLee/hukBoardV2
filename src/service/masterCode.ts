@@ -12,7 +12,9 @@ export async function getMasterCodeOf(masterCode: MASTER_CODE_ENUM) {
   return MasterCode.find<DBMasterCode>({
     masterCode: masterCode,
     isUse: true,
-  }).select("-_id -createdAt -updatedAt");
+  })
+    .select("-_id -createdAt -updatedAt")
+    .lean();
 }
 
 export async function getMasterCodeList() {
