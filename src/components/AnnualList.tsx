@@ -20,7 +20,7 @@ export default function AnnualList() {
   if (isLoading) {
     return <LoadingSpinner />;
   }
-  console.log(annualList);
+
   return (
     <>
       <div className="flex justify-end space-x-4 mt-4  sm:ml-16 sm:flex-none">

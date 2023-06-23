@@ -7,7 +7,7 @@ import { DBAnnual } from "@/models/annual.model";
 export default function useAnnual() {
   const nowYear = new Date().getFullYear().toString();
   const [baseYear, setBaseYear] = useState(nowYear);
-  const [saerchName, setSearchName] = useState("");
+
   const {
     data: annuals,
     isLoading,
