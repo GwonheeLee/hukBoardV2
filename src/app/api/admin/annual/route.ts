@@ -4,7 +4,7 @@ import { updateAnnual } from "@/service/annual";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function PUT(req: NextRequest) {
-  const annual: Omit<DBAnnual, "_id"> = await req.json();
+  const annual: DBAnnual = await req.json();
 
   try {
     await updateAnnual(annual);

@@ -2,28 +2,32 @@
 
 import { DBAnnual } from "@/models/annual.model";
 import { useState } from "react";
-import useSWR from "swr";
 import LoadingSpinner from "./LoadingSpinner";
 import Modal from "./Modal";
 import AnnualFormModal from "./AnnualFormModal";
-
+import useAnnual from "@/hooks/useAnnual";
 export default function AnnualList() {
-  const [baseYear, setBaseYear] = useState(new Date().getFullYear().toString());
-  const [selectedAnnual, setSelectedAnnual] = useState<Omit<DBAnnual, "_id">>();
-  const { data: annualList, isLoading } = useSWR<Omit<DBAnnual, "_id">[]>(
-    `/api/admin/annual/${baseYear}`
-  );
+  const {
+    annuals: annualList,
+    isLoading,
+    baseYear,
+    minuseBaseYear,
+    plusBaseYear,
+  } = useAnnual();
+
+  const [selectedAnnual, setSelectedAnnual] = useState<DBAnnual>();
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
+  console.log(annualList);
   return (
     <>
       <div className="flex justify-end space-x-4 mt-4  sm:ml-16 sm:flex-none">
         <div className="flex items-baseline">
           <button
             onClick={() => {
-              setBaseYear((prev) => (+prev - 1).toString());
+              minuseBaseYear();
             }}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
@@ -34,7 +38,7 @@ export default function AnnualList() {
           </span>
           <button
             onClick={() => {
-              setBaseYear((prev) => (+prev + 1).toString());
+              plusBaseYear();
             }}
             className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
           >
@@ -95,7 +99,7 @@ export default function AnnualList() {
                     </tr>
                   ) : (
                     annualList.map((annual) => (
-                      <tr key={annual.email}>
+                      <tr key={annual.id}>
                         <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           {annual.name}
                         </td>
@@ -127,7 +131,12 @@ export default function AnnualList() {
         </div>
         {selectedAnnual && (
           <Modal
-            content={<AnnualFormModal annual={selectedAnnual} />}
+            content={
+              <AnnualFormModal
+                annual={selectedAnnual}
+                close={() => setSelectedAnnual(undefined)}
+              />
+            }
             open={!!selectedAnnual}
             setOpen={() => {
               setSelectedAnnual(undefined);

@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
 
     const prevAnnual = await getAnnualOf(email, prevBaseYear);
 
-    const newAnnual: Omit<DBAnnual, "_id"> = {
+    const newAnnual: Omit<DBAnnual, "id"> = {
       baseYear: baseYear,
       email: email,
       name: member.name,

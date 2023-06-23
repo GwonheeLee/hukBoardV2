@@ -2,11 +2,14 @@
 import { ChangeEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { DBAnnual } from "@/models/annual.model";
+import useAnnual from "@/hooks/useAnnual";
 
 type Props = {
-  annual: Omit<DBAnnual, "_id">;
+  annual: DBAnnual;
+  close: () => void;
 };
-export default function AnnualFormModal({ annual }: Props) {
+export default function AnnualFormModal({ annual, close }: Props) {
+  const { updateAnnual } = useAnnual();
   const [dataForm, setDataForm] = useState(annual);
   const [loading, setLoading] = useState(false);
 
@@ -155,7 +158,10 @@ export default function AnnualFormModal({ annual }: Props) {
       </div>
 
       <button
-        onClick={handleClick}
+        onClick={() => {
+          updateAnnual(dataForm);
+          close();
+        }}
         className="mt-10  w-full !text-main-color !border-main-color justify-center"
       >
         실행

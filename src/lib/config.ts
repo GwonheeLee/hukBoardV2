@@ -9,8 +9,8 @@ function required(key: string, defaultValue: string | undefined = undefined) {
 
 export const config = {
   gmail: {
-    user: required("GMAIL_ID"),
-    pass: required("GMAIL_PASS"),
+    user: required("GMAIL_ID", ""),
+    pass: required("GMAIL_PASS", ""),
   },
   mongodb: {
     uri: required("MONGO_DB_URI"),

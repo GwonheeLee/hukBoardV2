@@ -2,16 +2,21 @@ import { dbConnect } from "@/lib/mongodb";
 import { Annual, DBAnnual } from "@/models/annual.model";
 import { regEmail, regYear } from "@/utils/regex";
 
-export async function getAnnualListOf(
-  baseYear: string
-): Promise<Omit<DBAnnual, "_id">[]> {
+export async function getAnnualListOf(baseYear: string): Promise<DBAnnual[]> {
   if (regYear.test(baseYear) === false) {
     throw new Error(`${baseYear}은 올바른 yyyy 형식이 아닙니다.`);
   }
 
   await dbConnect();
 
-  return Annual.find({ baseYear }).select("-_id").lean();
+  return (
+    await Annual.find({ baseYear }).select("-createdAt -updatedAt").lean()
+  ).map((i) => {
+    i.id = i._id.toHexString();
+    delete i._id;
+
+    return i;
+  });
 }
 
 export async function getAnnualOf(email: string, baseYear: string) {
@@ -21,16 +26,13 @@ export async function getAnnualOf(email: string, baseYear: string) {
 
   await dbConnect();
 
-  return Annual.findOne({ baseYear, email }).lean<Omit<DBAnnual, "_id">>();
+  return Annual.findOne({ baseYear, email });
 }
 
-export async function updateAnnual(annual: Omit<DBAnnual, "_id">) {
+export async function updateAnnual(annual: DBAnnual) {
   await dbConnect();
 
-  return Annual.findOneAndUpdate(
-    { baseYear: annual.baseYear, email: annual.email },
-    {
-      $set: { ...annual },
-    }
-  );
+  return Annual.findByIdAndUpdate(annual.id, {
+    $set: { ...annual },
+  });
 }

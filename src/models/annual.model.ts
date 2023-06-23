@@ -1,7 +1,7 @@
-import mongoose, { model, ObjectId } from "mongoose";
+import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 
 export type DBAnnual = {
-  _id: ObjectId;
+  id: string;
   baseYear: string;
   email: string;
   name: string;
@@ -10,7 +10,7 @@ export type DBAnnual = {
   prevUseAnnualCount: number;
 };
 
-const annualSchema = new mongoose.Schema<DBAnnual>(
+const annualSchema = new mongoose.Schema<DBAnnual & Document>(
   {
     baseYear: { type: String, required: true, index: true },
     email: {
@@ -27,7 +27,7 @@ const annualSchema = new mongoose.Schema<DBAnnual>(
     timestamps: true,
   }
 );
-annualSchema.index({ email: 1, baseYear: 1 }, { unique: true });
+annualSchema.index({ email: "asc", baseYear: "desc" }, { unique: true });
 
 annualSchema.pre("save", async function (this, next) {
   const annual = await Annual.findOne({
@@ -42,6 +42,9 @@ annualSchema.pre("save", async function (this, next) {
   next();
 });
 
-const Annual = mongoose.models.Annual || model("Annual", annualSchema);
+export type IAnnual = InferSchemaType<typeof annualSchema>;
+
+const Annual: Model<IAnnual> =
+  mongoose.models.Annual || model("Annual", annualSchema);
 
 export { Annual };
