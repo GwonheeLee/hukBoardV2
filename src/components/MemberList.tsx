@@ -1,9 +1,9 @@
 "use client";
 
-import { SearchMember } from "@/types/member";
 import { useRouter } from "next/navigation";
 import SearchInput from "./SearchInput";
 import { useState } from "react";
+import { SearchMember } from "@/service/member";
 
 export default function MemberList({
   memberList,

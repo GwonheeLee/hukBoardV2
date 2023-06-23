@@ -1,8 +1,8 @@
 import { dbConnect } from "@/lib/mongodb";
 import { Annual, DBAnnual } from "@/models/annual.model";
-import { Member } from "@/models/member.model";
 import { getAnnualOf } from "@/service/annual";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
+import { getMember } from "@/service/member";
 import { regEmail, regYear } from "@/utils/regex";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,9 +15,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    await dbConnect();
-
-    const member = await Member.findOne({ email });
+    const member = await getMember(email);
 
     if (!member || !!member.resignDate) {
       return new Response(`${email}에 해당하는 맴버는 없습니다.`, {

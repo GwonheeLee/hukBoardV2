@@ -1,14 +1,14 @@
 "use client";
 
-import { DBMember } from "@/types/member";
 import { regEmail, regPhone, regShortDate } from "@/utils/regex";
 import { ChangeEvent, FormEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useRouter } from "next/navigation";
 import { DBMasterCode } from "@/models/masterCode.model";
+import { DBMember } from "@/models/member.model";
 
 type Props = {
-  member: Omit<DBMember, "_id">;
+  member: DBMember;
   workTypeList: DBMasterCode[];
   teamCodeList: DBMasterCode[];
   isNew: boolean;
