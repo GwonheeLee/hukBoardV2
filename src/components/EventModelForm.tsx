@@ -6,7 +6,7 @@ import { ChangeEvent, FormEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 
 type Props = {
-  eventModel: Omit<DBEventModel, "_id">;
+  eventModel: DBEventModel;
   isNew: boolean;
 };
 

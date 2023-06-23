@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBEventModel, "_id"> = await req.json();
+  const formData: DBEventModel = await req.json();
 
   try {
     const result = await EventModel.create(formData);
@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBEventModel, "_id"> = await req.json();
+  const formData: DBEventModel = await req.json();
 
   try {
     await EventModel.findOneAndUpdate(

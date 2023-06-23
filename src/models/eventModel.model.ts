@@ -1,16 +1,12 @@
-import mongoose, { ObjectId, model } from "mongoose";
+import mongoose, { InferSchemaType, Model, model } from "mongoose";
 
-export type SearchEventModel = {
+export type DBEventModel = {
   eventCode: string;
   name: string;
-  isUse: boolean;
-};
-
-export type DBEventModel = SearchEventModel & {
-  _id: ObjectId;
   useCount: number;
   isNeedApproval: boolean;
   isMonthOnce: boolean;
+  isUse: boolean;
 };
 
 const eventModelSchema = new mongoose.Schema<Omit<DBEventModel, "_id">>(
@@ -62,7 +58,9 @@ eventModelSchema.pre("save", async function (this, next) {
   next();
 });
 
-const EventModel =
+export type IEventModel = InferSchemaType<typeof eventModelSchema>;
+
+const EventModel: Model<IEventModel> =
   mongoose.models.EventModel || model("EventModel", eventModelSchema);
 
 export { EventModel };

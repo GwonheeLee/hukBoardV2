@@ -1,19 +1,24 @@
 import { dbConnect } from "@/lib/mongodb";
-import {
-  DBEventModel,
-  EventModel,
-  SearchEventModel,
-} from "@/models/eventModel.model";
+import { EventModel } from "@/models/eventModel.model";
 
-export async function getEventModelList(): Promise<SearchEventModel[]> {
+export type SearchEventModel = {
+  eventCode: string;
+  name: string;
+  isUse: boolean;
+};
+
+export async function getEventModelList() {
   await dbConnect();
-  return EventModel.find().select("-_id eventCode name isUse").lean();
+  return EventModel.find()
+    .select("-_id -createdAt -updatedAt eventCode name isUse")
+    .sort({ eventCode: "asc" })
+    .lean();
 }
 
 export async function getEventModel(eventCode: string) {
   await dbConnect();
 
   return EventModel.findOne({ eventCode })
-    .select("-_id")
-    .lean<Omit<DBEventModel, "_id">>();
+    .select("-_id -createdAt -updatedAt")
+    .lean();
 }

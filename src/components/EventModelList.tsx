@@ -1,6 +1,6 @@
 "use client";
 
-import { SearchEventModel } from "@/models/eventModel.model";
+import { SearchEventModel } from "@/service/eventModel";
 import { useRouter } from "next/navigation";
 
 export default function EventModelList({

@@ -1,6 +1,7 @@
 import EventModelForm from "@/components/EventModelForm";
 import { getEventModel } from "@/service/eventModel";
 
+export const dynamic = "force-dynamic";
 type Props = {
   params: {
     eventCode: string;
