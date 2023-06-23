@@ -1,16 +1,16 @@
 "use client";
 
-import { MasterCodeT } from "@/models/masterCode.model";
 import { DBMember } from "@/types/member";
 import { regEmail, regPhone, regShortDate } from "@/utils/regex";
 import { ChangeEvent, FormEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import { useRouter } from "next/navigation";
+import { DBMasterCode } from "@/models/masterCode.model";
 
 type Props = {
   member: Omit<DBMember, "_id">;
-  workTypeList: MasterCodeT[];
-  teamCodeList: MasterCodeT[];
+  workTypeList: DBMasterCode[];
+  teamCodeList: DBMasterCode[];
   isNew: boolean;
 };
 export default function MemberForm({

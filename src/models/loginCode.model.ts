@@ -4,6 +4,7 @@ import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 export type DBLoginCode = {
   email: string;
   code: string;
+  updatedAt: NativeDate;
 };
 const loginCodeSchema = new mongoose.Schema<DBLoginCode & Document>(
   {
