@@ -20,6 +20,6 @@ export async function getMasterCodeList() {
 
   return MasterCode.find<DBMasterCode>()
     .select("-_id -createdAt -updatedAt")
-    .sort({ masterCode: "asc" })
+    .sort({ code: "asc" })
     .lean();
 }
