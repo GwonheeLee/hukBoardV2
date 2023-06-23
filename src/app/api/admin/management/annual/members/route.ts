@@ -1,7 +1,6 @@
 import { dbConnect } from "@/lib/mongodb";
 import { Annual } from "@/models/annual.model";
 import { Member } from "@/models/member.model";
-import { DBMember } from "@/types/member";
 import { regYear } from "@/utils/regex";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -14,8 +13,7 @@ export async function POST(req: NextRequest) {
   try {
     await dbConnect();
 
-    const memberList = await Member.find<DBMember>({ resignDate: null });
-
+    const memberList = await Member.find({ resignDate: null });
     const promiseList = memberList.map((member) =>
       fetch(`${req.nextUrl.origin}/api/admin/management/annual/member`, {
         method: "POST",

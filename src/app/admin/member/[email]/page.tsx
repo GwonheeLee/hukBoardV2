@@ -1,8 +1,8 @@
 import MemberForm from "@/components/MemberForm";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { getMember } from "@/service/member";
-import { DBMember } from "@/types/member";
 
+export const dynamic = "force-dynamic";
 type Props = {
   params: {
     email: string;

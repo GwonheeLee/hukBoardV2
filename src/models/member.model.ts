@@ -1,8 +1,19 @@
-import { DBMember } from "@/types/member";
 import { regEmail, regPhone, regShortDate } from "@/utils/regex";
-import mongoose, { model } from "mongoose";
+import mongoose, { Document, InferSchemaType, Model, model } from "mongoose";
 
-const memberSchema = new mongoose.Schema<Omit<DBMember, "_id">>(
+export type DBMember = {
+  email: string;
+  name: string;
+  workType: string;
+  teamCode: string;
+  enterDate: string;
+  birthDay: string;
+  phone: string;
+  isAdmin: boolean;
+  resignDate?: string | null;
+  slackUID: string;
+};
+const memberSchema = new mongoose.Schema<DBMember & Document>(
   {
     email: {
       type: String,
@@ -65,6 +76,9 @@ memberSchema.pre("save", async function (this, next) {
   next();
 });
 
-const Member = mongoose.models.Member || model("Member", memberSchema);
+export type IMember = InferSchemaType<typeof memberSchema>;
+
+const Member: Model<IMember> =
+  mongoose.models.Member || model("Member", memberSchema);
 
 export { Member };

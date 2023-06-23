@@ -1,12 +1,11 @@
 import { dbConnect } from "@/lib/mongodb";
-import { Member } from "@/models/member.model";
+import { DBMember, Member } from "@/models/member.model";
 import { NextRequest, NextResponse } from "next/server";
-import { DBMember } from "@/types/member";
 
 export async function POST(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBMember, "_id"> = await req.json();
+  const formData: DBMember = await req.json();
 
   try {
     await Member.create(formData);
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   await dbConnect();
 
-  const formData: Omit<DBMember, "_id"> = await req.json();
+  const formData: DBMember = await req.json();
 
   try {
     await Member.findOneAndUpdate(

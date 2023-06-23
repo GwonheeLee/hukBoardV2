@@ -3,7 +3,6 @@ import { Annual, DBAnnual } from "@/models/annual.model";
 import { Member } from "@/models/member.model";
 import { getAnnualOf } from "@/service/annual";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
-import { DBMember } from "@/types/member";
 import { regEmail, regYear } from "@/utils/regex";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -18,7 +17,7 @@ export async function POST(req: NextRequest) {
   try {
     await dbConnect();
 
-    const member = await Member.findOne<DBMember>({ email });
+    const member = await Member.findOne({ email });
 
     if (!member || !!member.resignDate) {
       return new Response(`${email}에 해당하는 맴버는 없습니다.`, {

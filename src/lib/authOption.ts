@@ -3,6 +3,8 @@ import { dbConnect } from "@/lib/mongodb";
 import { LoginCode } from "@/models/loginCode.model";
 import { Member } from "@/models/member.model";
 import { NextAuthOptions } from "next-auth";
+import { AuthUser, getAuthMember } from "@/service/member";
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -30,10 +32,7 @@ export const authOptions: NextAuthOptions = {
           if (diffSecond > 30 * 60) {
             return null;
           }
-          const member = await Member.findOne({
-            email: email,
-            resignDate: null,
-          }).select("email name workType teamCode isAdmin slackUID");
+          const member = await getAuthMember(email);
 
           return member;
         }

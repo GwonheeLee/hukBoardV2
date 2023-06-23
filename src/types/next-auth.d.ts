@@ -1,4 +1,4 @@
-import { AuthUser } from "./member";
+import { AuthUser } from "@/service/member";
 
 declare module "next-auth" {
   interface Session {

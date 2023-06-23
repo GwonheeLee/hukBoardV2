@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     codeValue,
     codeSubValue,
     isUse,
-  }: Omit<DBMasterCode, "_id"> = await req.json();
+  }: DBMasterCode = await req.json();
 
   if (
     !code ||
@@ -55,7 +55,7 @@ export async function PUT(req: NextRequest) {
     codeValue,
     codeSubValue,
     isUse,
-  }: Omit<DBMasterCode, "_id"> = await req.json();
+  }: DBMasterCode = await req.json();
 
   if (
     !code ||

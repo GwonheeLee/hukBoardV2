@@ -1,17 +1,13 @@
-import { dbConnect } from "@/lib/mongodb";
 import { LoginCode } from "@/models/loginCode.model";
-import { Member } from "@/models/member.model";
-import { isExistMember } from "@/service/auth";
+import { getAuthMember } from "@/service/member";
 import { sendMail } from "@/utils/mail";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  await dbConnect();
-
   const { email } = await req.json();
-  const result = await isExistMember(email);
+  const member = await getAuthMember(email);
 
-  if (!result) {
+  if (!member) {
     return new Response("등록된 사용자가 아닙니다.", { status: 401 });
   }
 
