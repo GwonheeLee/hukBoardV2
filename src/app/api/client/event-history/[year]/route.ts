@@ -4,29 +4,26 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Context = {
   params: {
-    slug: string[];
+    year: string;
   };
 };
-export async function GET(_: NextRequest, context: Context) {
+export async function GET(req: NextRequest, context: Context) {
   const {
-    params: { slug },
+    params: { year },
   } = context;
-
+  const { searchParams } = new URL(req.url);
+  const pageNumber = searchParams.get("pageNumber");
   if (
-    !slug ||
-    !Array.isArray(slug) ||
-    slug.length !== 2 ||
-    !regYear.test(slug[0]) ||
-    !Number.isInteger(+slug[1])
+    !year ||
+    !regYear.test(year) ||
+    !pageNumber ||
+    !Number.isInteger(+pageNumber)
   ) {
     return new NextResponse("인자 잘못 됨", { status: 400 });
   }
 
-  const baseYear = slug[0];
-  const pageNumber = Math.abs(+slug[1]);
-
   try {
-    const datas = await getEventHistoryListPage(baseYear, pageNumber);
+    const datas = await getEventHistoryListPage(year, Math.abs(+pageNumber));
     return NextResponse.json(datas);
   } catch (e: any) {
     return new Response(e.message, { status: 400 });

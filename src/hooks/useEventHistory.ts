@@ -15,7 +15,7 @@ export default function useEventHistoryList() {
     error,
     mutate,
   } = useSWR<DBEventHistory[]>(
-    `/api/client/event-history/${baseYear}/${pageNumber}`
+    `/api/client/event-history/${baseYear}?pageNumber=${pageNumber}`
   );
 
   const changeBaseYear = (OPTION: "+" | "-") => {
