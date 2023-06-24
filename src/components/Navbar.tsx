@@ -11,7 +11,7 @@ import Link from "next/link";
 // Max Count 8
 const navigation = [
   { name: "스케줄", href: "/client/schedule", isAdmin: false },
-  { name: "이벤트", href: "/client/event", isAdmin: false },
+  { name: "이벤트", href: "/client/event-history", isAdmin: false },
   { name: "맴버 관리", href: "/admin/member", isAdmin: true },
   { name: "슈퍼 스케줄", href: "/admin/schedule", isAdmin: true },
   { name: "연차 관리", href: "/admin/annual", isAdmin: true },

@@ -1,4 +1,4 @@
-import { dbConnect } from "@/lib/mongodb";
+import { convertObjectId, dbConnect } from "@/lib/mongodb";
 import { Annual, DBAnnual } from "@/models/annual.model";
 import { regEmail, regYear } from "@/utils/regex";
 
@@ -11,12 +11,7 @@ export async function getAnnualListOf(baseYear: string): Promise<DBAnnual[]> {
 
   return (
     await Annual.find({ baseYear }).select("-createdAt -updatedAt").lean()
-  ).map((i) => {
-    i.id = i._id.toHexString();
-    delete i._id;
-
-    return i;
-  });
+  ).map(convertObjectId);
 }
 
 export async function getAnnualOf(email: string, baseYear: string) {

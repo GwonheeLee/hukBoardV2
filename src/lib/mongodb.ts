@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 import { config } from "./config";
 
 export async function dbConnect() {
@@ -11,4 +11,11 @@ export async function dbConnect() {
     });
   }
   return global.db;
+}
+
+export function convertObjectId(item: any) {
+  item.id = item._id.toHexString();
+  delete item._id;
+
+  return item;
 }
