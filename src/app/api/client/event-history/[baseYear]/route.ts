@@ -4,18 +4,18 @@ import { NextRequest, NextResponse } from "next/server";
 
 type Context = {
   params: {
-    year: string;
+    baseYear: string;
   };
 };
 export async function GET(req: NextRequest, context: Context) {
   const {
-    params: { year },
+    params: { baseYear },
   } = context;
   const { searchParams } = new URL(req.url);
   const pageNumber = searchParams.get("pageNumber");
   if (
-    !year ||
-    !regYear.test(year) ||
+    !baseYear ||
+    !regYear.test(baseYear) ||
     !pageNumber ||
     !Number.isInteger(+pageNumber)
   ) {
@@ -23,7 +23,10 @@ export async function GET(req: NextRequest, context: Context) {
   }
 
   try {
-    const datas = await getEventHistoryListPage(year, Math.abs(+pageNumber));
+    const datas = await getEventHistoryListPage(
+      baseYear,
+      Math.abs(+pageNumber)
+    );
     return NextResponse.json(datas);
   } catch (e: any) {
     return new Response(e.message, { status: 400 });

@@ -16,7 +16,7 @@ export async function getEventHistoryListPage(
     await EventHistory.find({
       startDate: { $gte: startDate, $lte: endDate },
     })
-      .sort({ isApproval: "asc", startDate: "desc" })
+      .sort({ startDate: "desc" })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean()

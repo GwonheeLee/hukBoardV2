@@ -1,7 +1,7 @@
 "use client";
 
 import { DBEventHistory } from "@/models/eventHistory.model";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import useSWR from "swr";
 
 export default function useEventHistoryList() {
@@ -18,7 +18,7 @@ export default function useEventHistoryList() {
     `/api/client/event-history/${baseYear}?pageNumber=${pageNumber}`
   );
 
-  const changeBaseYear = (OPTION: "+" | "-") => {
+  const changeBaseYear = useCallback((OPTION: "+" | "-") => {
     switch (OPTION) {
       case "+":
         setPageNumber(1);
@@ -29,21 +29,24 @@ export default function useEventHistoryList() {
         setBaseYear((prev) => (+prev - 1).toString());
         break;
     }
-  };
+  }, []);
 
-  const changePageNumber = (OPTION: "+" | "-") => {
+  const changePageNumber = useCallback((OPTION: "+" | "-") => {
     switch (OPTION) {
       case "+":
         setPageNumber((prev) => prev + 1);
         break;
       case "-":
-        if (pageNumber <= 1) {
-          return;
-        }
-        setPageNumber((prev) => prev - 1);
+        setPageNumber((prev) => {
+          if (prev <= 1) {
+            return prev;
+          } else {
+            return prev - 1;
+          }
+        });
         break;
     }
-  };
+  }, []);
   return {
     eventHistorys,
     isLoading,
