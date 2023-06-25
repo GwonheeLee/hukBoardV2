@@ -1,11 +1,11 @@
 "use client";
 
-import { DBAnnual } from "@/models/annual.model";
 import { useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
 import Modal from "./Modal";
 import AnnualFormModal from "./AnnualFormModal";
 import useAnnual from "@/hooks/useAnnual";
+import { SearchAnnual } from "@/service/annual";
 export default function AnnualList() {
   const {
     annuals: annualList,
@@ -15,7 +15,7 @@ export default function AnnualList() {
     plusBaseYear,
   } = useAnnual();
 
-  const [selectedAnnual, setSelectedAnnual] = useState<DBAnnual>();
+  const [selectedAnnual, setSelectedAnnual] = useState<SearchAnnual>();
 
   if (isLoading) {
     return <LoadingSpinner />;

@@ -4,7 +4,6 @@ export type DBAnnual = {
   id: string;
   baseYear: string;
   email: string;
-  name: string;
   annualCount: number;
   useAnnualCount: number;
   prevUseAnnualCount: number;
@@ -17,7 +16,6 @@ const annualSchema = new mongoose.Schema<DBAnnual & Document>(
       type: String,
       required: true,
     },
-    name: { type: String, required: true },
     annualCount: { type: Number, required: true, default: 0 },
     useAnnualCount: { type: Number, required: true, default: 0 },
     prevUseAnnualCount: { type: Number, required: true, default: 0 },

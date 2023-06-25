@@ -1,11 +1,11 @@
 "use client";
 import { ChangeEvent, useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-import { DBAnnual } from "@/models/annual.model";
 import useAnnual from "@/hooks/useAnnual";
+import { SearchAnnual } from "@/service/annual";
 
 type Props = {
-  annual: DBAnnual;
+  annual: SearchAnnual;
   close: () => void;
 };
 export default function AnnualFormModal({ annual, close }: Props) {

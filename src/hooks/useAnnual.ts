@@ -3,6 +3,7 @@
 import useSWR from "swr";
 import { useCallback, useState } from "react";
 import { DBAnnual } from "@/models/annual.model";
+import { SearchAnnual } from "@/service/annual";
 
 export default function useAnnual() {
   const nowYear = new Date().getFullYear().toString();
@@ -13,10 +14,10 @@ export default function useAnnual() {
     isLoading,
     error,
     mutate,
-  } = useSWR<DBAnnual[]>(`/api/admin/annual/${baseYear}`);
+  } = useSWR<SearchAnnual[]>(`/api/admin/annual/${baseYear}`);
 
   const updateAnnual = useCallback(
-    (annual: DBAnnual) => {
+    (annual: SearchAnnual) => {
       if (!annuals) return;
 
       const newAnnuals = annuals.map((i) => (i.id === annual.id ? annual : i));
