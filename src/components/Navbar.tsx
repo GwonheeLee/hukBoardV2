@@ -15,6 +15,7 @@ const navigation = [
   { name: "맴버 관리", href: "/admin/member", isAdmin: true },
   { name: "슈퍼 스케줄", href: "/admin/schedule", isAdmin: true },
   { name: "연차 관리", href: "/admin/annual", isAdmin: true },
+  { name: "이벤트 승인", href: "/admin/event-approval", isAdmin: true },
   { name: "이벤트 모델", href: "/admin/event-model", isAdmin: true },
   { name: "운영", href: "/admin/management", isAdmin: true },
 ];

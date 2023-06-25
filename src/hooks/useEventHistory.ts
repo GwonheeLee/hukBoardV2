@@ -57,3 +57,17 @@ export default function useEventHistoryList() {
     changePageNumber,
   };
 }
+
+async function postEventHistory(event: Omit<DBEventHistory, "id">) {
+  return fetch("/api/client/event-history", {
+    method: "POST",
+    body: JSON.stringify(event),
+  }).then(async (res) => {
+    if (!res.ok) {
+      const message = await res.text();
+      throw new Error(`상태코드 : ${res.status} \n 메세지 : ${message}`);
+    }
+
+    return res.json();
+  });
+}
