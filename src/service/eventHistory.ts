@@ -157,3 +157,23 @@ export async function getUseAnnualCountOf(baseYear: string, email: string) {
 
   return useCount;
 }
+
+export async function isMonthOnceEventHistory(
+  eventCode: string,
+  date: string,
+  email: string
+) {
+  await dbConnect();
+
+  const base = new DateObject(date);
+  const startDate = `${base.getFullYearString()}-${base.getMonthString()}-01`;
+  const endDate = `${base.getFullYearString()}-${base.getMonthString()}-${base.getLastDate()}`;
+
+  const eventHistory = await EventHistory.findOne({
+    email,
+    eventCode,
+    startDate: { $gte: startDate, $lte: endDate },
+  });
+
+  return !!eventHistory;
+}

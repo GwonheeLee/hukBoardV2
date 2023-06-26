@@ -53,6 +53,10 @@ export class DateObject {
     return this._date.getDate().toString().padStart(2, "0");
   }
 
+  getLastDate() {
+    return this.setLastDate().getDateString();
+  }
+
   setFullYear(year: number) {
     let tempDate = new Date(this._date);
 
