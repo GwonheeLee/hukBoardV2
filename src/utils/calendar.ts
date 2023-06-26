@@ -1,6 +1,6 @@
 import { DateObject } from "./date";
 
-export type Calendar = { day: string; isWeekend: boolean };
+export type Calendar = { date: string; isWeekend: boolean };
 
 export function getCalendar(date: string | Date) {
   const curDate = new DateObject(date);
@@ -16,17 +16,17 @@ export function getCalendar(date: string | Date) {
 
   const calendar: Calendar[] = [];
   for (let i = 0; i < startTempCount; i++) {
-    calendar.push({ day: "", isWeekend: false });
+    calendar.push({ date: "", isWeekend: false });
   }
   for (let i = 1; i <= lastDate; i++) {
     let weekend = [-1, 0, 6].includes(firstDay % 7);
-    let day = i.toString().padStart(2, "0");
+    let date = curDate.setDate(i).toShortDate();
 
-    calendar.push({ day, isWeekend: weekend });
+    calendar.push({ date, isWeekend: weekend });
     firstDay++;
   }
   for (let i = 0; i < endTempCount; i++) {
-    calendar.push({ day: "", isWeekend: false });
+    calendar.push({ date: "", isWeekend: false });
   }
 
   return calendar;

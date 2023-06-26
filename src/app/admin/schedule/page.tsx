@@ -1,6 +1,6 @@
 import { getCalendar } from "@/utils/calendar";
 
-export default function SchedulePage() {
+export default function ScheduleAdminPage() {
   const calendar = getCalendar(new Date());
 
   return (
@@ -17,7 +17,7 @@ export default function SchedulePage() {
       <div className="flex flex-auto bg-gray-200 text-xs leading-6 text-gray-700">
         <div className=" w-full grid grid-cols-7 grid-rows-6 gap-px">
           {calendar.map((item) => {
-            if (!item.day) {
+            if (!item.date) {
               return (
                 <div
                   key={Math.random()}
@@ -28,12 +28,21 @@ export default function SchedulePage() {
 
             return (
               <div
-                key={item.day}
+                key={item.date}
+                id={item.date}
                 className={`min-h-[120px] bg-white relative py-2 px-3 cursor-pointer hover:underline  ${
                   item.isWeekend ? "text-main-color" : ""
                 }`}
               >
-                <time dateTime={item.day}>{item.day}</time>
+                <time className="flex justify-end" dateTime={item.date}>
+                  {item.date.slice(-2)}
+                </time>
+                <div>
+                  <p>이권희 - 연차</p>
+                  <p>이권희 - 연차</p>
+                  <p>이권희 - 연차</p>
+                  <p>이권희 - 연차</p>
+                </div>
               </div>
             );
           })}
