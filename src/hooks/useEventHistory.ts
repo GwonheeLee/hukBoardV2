@@ -1,6 +1,8 @@
 "use client";
 
 import { DBEventHistory } from "@/models/eventHistory.model";
+import { PostEventHistory } from "@/service/eventHistory";
+import { clientResponseHandler } from "@/utils/errro";
 import { useCallback, useState } from "react";
 import useSWR from "swr";
 
@@ -17,7 +19,26 @@ export default function useEventHistoryList() {
   } = useSWR<DBEventHistory[]>(
     `/api/client/event-history/${baseYear}?pageNumber=${pageNumber}`
   );
-
+  const addEventHistory = useCallback(
+    (event: PostEventHistory) => {
+      return mutate(postEventHistory(event), {
+        populateCache: false,
+        revalidate: true,
+        rollbackOnError: true,
+      });
+    },
+    [mutate]
+  );
+  const removeEventHistory = useCallback(
+    (id: string) => {
+      return mutate(deleteEventHistory(id), {
+        populateCache: false,
+        revalidate: true,
+        rollbackOnError: true,
+      });
+    },
+    [mutate]
+  );
   const changeBaseYear = useCallback((OPTION: "+" | "-") => {
     switch (OPTION) {
       case "+":
@@ -55,19 +76,20 @@ export default function useEventHistoryList() {
     changeBaseYear,
     pageNumber,
     changePageNumber,
+    addEventHistory,
+    removeEventHistory,
   };
 }
 
-async function postEventHistory(event: Omit<DBEventHistory, "id">) {
+async function postEventHistory(event: PostEventHistory) {
   return fetch("/api/client/event-history", {
     method: "POST",
     body: JSON.stringify(event),
-  }).then(async (res) => {
-    if (!res.ok) {
-      const message = await res.text();
-      throw new Error(`상태코드 : ${res.status} \n 메세지 : ${message}`);
-    }
+  }).then(clientResponseHandler);
+}
 
-    return res.json();
-  });
+async function deleteEventHistory(id: string) {
+  return fetch(`/api/client/event-history?id=${id}`, {
+    method: "DELETE",
+  }).then(clientResponseHandler);
 }

@@ -2,8 +2,18 @@
 
 import useEventHistoryList from "@/hooks/useEventHistory";
 import LoadingSpinner from "./LoadingSpinner";
+import { DateObject } from "@/utils/date";
+import { useState } from "react";
+import Modal from "./Modal";
+import EventHistoryFormModal from "./EventHistoryFormModal";
+import { SearchEventModel } from "@/service/eventModel";
 
-export default function EventHistoryList() {
+export default function EventHistoryList({
+  eventModelList,
+}: {
+  eventModelList: SearchEventModel[];
+}) {
+  const [openModal, setOpenModal] = useState(false);
   const {
     eventHistorys,
     isLoading,
@@ -11,6 +21,7 @@ export default function EventHistoryList() {
     changeBaseYear,
     pageNumber,
     changePageNumber,
+    removeEventHistory,
   } = useEventHistoryList();
 
   if (isLoading) {
@@ -40,7 +51,10 @@ export default function EventHistoryList() {
             ▶
           </button>
         </div>
-        <button className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+        <button
+          onClick={() => setOpenModal(true)}
+          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50"
+        >
           등록
         </button>
       </div>
@@ -114,7 +128,9 @@ export default function EventHistoryList() {
                           {eventHistory.id}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                          {eventHistory.eventCode}
+                          {eventModelList.find(
+                            (em) => em.eventCode === eventHistory.eventCode
+                          )?.name ?? "Unknown"}
                         </td>
                         <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                           {eventHistory.description}
@@ -129,12 +145,22 @@ export default function EventHistoryList() {
                           {eventHistory.isApproval ? "승인" : "미승인"}
                         </td>
                         <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-                          <button
-                            className="text-pink-400 hover:text-pink-800"
-                            onClick={() => {}}
-                          >
-                            DELETE
-                          </button>
+                          {(!eventHistory.isApproval ||
+                            new DateObject().toShortDate() <=
+                              eventHistory.startDate) && (
+                            <button
+                              className="text-pink-400 hover:text-pink-800"
+                              onClick={() => {
+                                const confirm =
+                                  window.confirm("삭제 하시겠습니까?");
+                                if (confirm) {
+                                  removeEventHistory(eventHistory.id);
+                                }
+                              }}
+                            >
+                              DELETE
+                            </button>
+                          )}
                         </td>
                       </tr>
                     ))
@@ -173,6 +199,16 @@ export default function EventHistoryList() {
           </div>
         </div>
       </div>
+      <Modal
+        open={openModal}
+        setOpen={() => setOpenModal(false)}
+        content={
+          <EventHistoryFormModal
+            eventModelList={eventModelList.filter((em) => em.isUse)}
+            close={() => setOpenModal(false)}
+          />
+        }
+      />
     </>
   );
 }

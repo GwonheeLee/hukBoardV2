@@ -102,9 +102,13 @@ export default function EventApprovalList() {
                         {!event.isApproval && (
                           <button
                             className="text-pink-400 hover:text-pink-800"
-                            onClick={() =>
-                              updateApproval(event.id, !event.isApproval)
-                            }
+                            onClick={() => {
+                              const confirm =
+                                window.confirm("승인 하겠습니까?");
+                              if (confirm) {
+                                updateApproval(event.id, !event.isApproval);
+                              }
+                            }}
                           >
                             APPROVAL
                           </button>
@@ -114,7 +118,11 @@ export default function EventApprovalList() {
                         <button
                           className="text-pink-400 hover:text-pink-800"
                           onClick={() => {
-                            removeEvent(event.id);
+                            const confirm =
+                              window.confirm("삭제 하시겠습니까?");
+                            if (confirm) {
+                              removeEvent(event.id);
+                            }
                           }}
                         >
                           DELETE

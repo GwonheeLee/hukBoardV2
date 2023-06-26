@@ -18,36 +18,24 @@ export default function useEventApprovalList() {
 
   const updateApproval = useCallback(
     (id: string, approval: boolean) => {
-      if (!eventHistorys) return;
-
-      const newEventHistorys = eventHistorys.map((e) =>
-        e.id === id ? { ...e, isApproval: approval } : e
-      );
-
       return mutate(patchApproval(id, approval), {
-        optimisticData: newEventHistorys,
         populateCache: false,
         revalidate: true,
         rollbackOnError: true,
       });
     },
-    [eventHistorys, mutate]
+    [mutate]
   );
 
   const removeEvent = useCallback(
     (id: string) => {
-      if (!eventHistorys) return;
-
-      const newEventHistorys = eventHistorys.filter((e) => e.id !== id);
-
       return mutate(deleteApproval(id), {
-        optimisticData: newEventHistorys,
         populateCache: false,
         revalidate: true,
         rollbackOnError: true,
       });
     },
-    [eventHistorys, mutate]
+    [mutate]
   );
 
   const changePageNumber = useCallback((OPTION: "+" | "-") => {

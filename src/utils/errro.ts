@@ -39,7 +39,11 @@ export async function clientResponseHandler(res: Response) {
   if (!res.ok) {
     const message = await res.text();
 
-    window.alert(`상태코드 : ${res.status} \n 메세지 : ${message}`);
+    window.alert(
+      `상태코드 : ${res.status} \n 메세지 : ${
+        message === "" ? res.statusText : message
+      }`
+    );
     return;
   }
 
