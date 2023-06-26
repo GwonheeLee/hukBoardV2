@@ -7,11 +7,12 @@ export default function EventApprovalList() {
   const {
     eventList,
     isLoading,
-    error,
     pageNumber,
     changePageNumber,
     updateApproval,
+    removeEvent,
   } = useEventApprovalList();
+
   if (isLoading) {
     return <LoadingSpinner />;
   }
@@ -112,7 +113,9 @@ export default function EventApprovalList() {
                       <td className="relative whitespace-nowrap  text-right text-sm font-medium pr-2">
                         <button
                           className="text-pink-400 hover:text-pink-800"
-                          onClick={() => {}}
+                          onClick={() => {
+                            removeEvent(event.id);
+                          }}
                         >
                           DELETE
                         </button>

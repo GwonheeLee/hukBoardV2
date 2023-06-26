@@ -1,3 +1,4 @@
+import { EventHistory } from "@/models/eventHistory.model";
 import { getSearchApprovalList, updateApproval } from "@/service/eventHistory";
 import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { NextRequest, NextResponse } from "next/server";
@@ -33,6 +34,31 @@ export async function PATCH(req: NextRequest) {
     } else {
       return NextResponse.json("성공");
     }
+  } catch (e: any) {
+    return serverErrorResponse(e);
+  }
+}
+
+export async function DELETE(req: NextRequest) {
+  const { searchParams } = new URL(req.url);
+  const id = searchParams.get("id");
+
+  try {
+    if (!id) {
+      throw new BadRequestError("올바른 인자 값이 아닙니다.");
+    }
+
+    const result = await updateApproval(id, false);
+
+    if (!result) {
+      throw new Error(
+        "이벤트 승인 변경에서 문제가 발생했습니다. 관리자에게 문의 꼭 부탁드립니다."
+      );
+    }
+
+    await EventHistory.findByIdAndDelete(id);
+
+    return NextResponse.json("성공");
   } catch (e: any) {
     return serverErrorResponse(e);
   }

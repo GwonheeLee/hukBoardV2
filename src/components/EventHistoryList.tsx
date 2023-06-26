@@ -3,17 +3,6 @@
 import useEventHistoryList from "@/hooks/useEventHistory";
 import LoadingSpinner from "./LoadingSpinner";
 
-const eventHistoryList = [
-  {
-    id: "213",
-    eventCode: "E00001",
-    evnetName: "연차",
-    description: "아아",
-    startDate: "2023-05-05",
-    endDate: "2023-06-06",
-    isApproval: true,
-  },
-];
 export default function EventHistoryList() {
   const {
     eventHistorys,

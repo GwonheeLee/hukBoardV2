@@ -83,8 +83,12 @@ export async function updateApproval(id: string, approval: boolean) {
   try {
     const event = await EventHistory.findById(id);
 
-    if (!event || event.isApproval === approval) {
+    if (!event) {
       return false;
+    }
+
+    if (event.isApproval === approval) {
+      return true;
     }
 
     const eventModel = await EventModel.findOne({
@@ -120,6 +124,7 @@ export async function updateApproval(id: string, approval: boolean) {
     await event.save();
     return true;
   } catch (e) {
+    // ToDo 슬랙 메세지 보내기
     console.log(e);
     return false;
   }

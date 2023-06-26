@@ -34,6 +34,22 @@ export default function useEventApprovalList() {
     [eventHistorys, mutate]
   );
 
+  const removeEvent = useCallback(
+    (id: string) => {
+      if (!eventHistorys) return;
+
+      const newEventHistorys = eventHistorys.filter((e) => e.id !== id);
+
+      return mutate(deleteApproval(id), {
+        optimisticData: newEventHistorys,
+        populateCache: false,
+        revalidate: true,
+        rollbackOnError: true,
+      });
+    },
+    [eventHistorys, mutate]
+  );
+
   const changePageNumber = useCallback((OPTION: "+" | "-") => {
     switch (OPTION) {
       case "+":
@@ -54,8 +70,8 @@ export default function useEventApprovalList() {
   return {
     eventList: eventHistorys,
     isLoading,
-    error,
     updateApproval,
+    removeEvent,
     pageNumber,
     changePageNumber,
   };
@@ -65,5 +81,11 @@ async function patchApproval(id: string, approval: boolean) {
   return fetch("/api/admin/event-approval", {
     method: "PATCH",
     body: JSON.stringify({ id, approval }),
+  }).then(clientResponseHandler);
+}
+
+async function deleteApproval(id: string) {
+  return fetch(`/api/admin/event-approval?id=${id}`, {
+    method: "DELETE",
   }).then(clientResponseHandler);
 }
