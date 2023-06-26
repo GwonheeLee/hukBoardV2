@@ -1,5 +1,6 @@
 import { dbConnect } from "@/lib/mongodb";
 import { DBMember, Member } from "@/models/member.model";
+import { serverErrorResponse } from "@/utils/errro";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -12,7 +13,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json("성공");
   } catch (e: any) {
-    return new Response(e.message, { status: 400 });
+    return serverErrorResponse(e);
   }
 }
 
@@ -31,6 +32,6 @@ export async function PUT(req: NextRequest) {
 
     return NextResponse.json("성공");
   } catch (e: any) {
-    return new Response(e.message, { status: 400 });
+    return serverErrorResponse(e);
   }
 }

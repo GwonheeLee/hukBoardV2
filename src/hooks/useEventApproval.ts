@@ -3,6 +3,7 @@ import useSWR from "swr";
 
 import { useCallback, useState } from "react";
 import { SearchApproval } from "@/service/eventHistory";
+import { clientResponseHandler } from "@/utils/errro";
 
 export default function useEventApprovalList() {
   const [pageNumber, setPageNumber] = useState(1);
@@ -26,7 +27,7 @@ export default function useEventApprovalList() {
       return mutate(patchApproval(id, approval), {
         optimisticData: newEventHistorys,
         populateCache: false,
-        revalidate: false,
+        revalidate: true,
         rollbackOnError: true,
       });
     },
@@ -64,13 +65,5 @@ async function patchApproval(id: string, approval: boolean) {
   return fetch("/api/admin/event-approval", {
     method: "PATCH",
     body: JSON.stringify({ id, approval }),
-  }).then(async (res) => {
-    if (!res.ok) {
-      const message = await res.json();
-      console.log(message);
-      window.alert(`상태코드 : ${res.status} \n 메세지 : ${message}`);
-    }
-
-    return res.json();
-  });
+  }).then(clientResponseHandler);
 }

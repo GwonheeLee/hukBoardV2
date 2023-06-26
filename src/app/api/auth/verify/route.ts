@@ -1,26 +1,32 @@
 import { LoginCode } from "@/models/loginCode.model";
 import { getAuthMember } from "@/service/member";
+import { UnAuthorizedError, serverErrorResponse } from "@/utils/errro";
 import { sendMail } from "@/utils/mail";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
   const { email } = await req.json();
-  const member = await getAuthMember(email);
 
-  if (!member) {
-    return new Response("등록된 사용자가 아닙니다.", { status: 401 });
+  try {
+    const member = await getAuthMember(email);
+
+    if (!member) {
+      throw new UnAuthorizedError("등록된 사용자가 아닙니다.");
+    }
+
+    const loginCode = getRandomCode();
+    console.log("로그인 코드", loginCode);
+
+    await LoginCode.findOneAndUpdate(
+      { email },
+      { $set: { code: loginCode } },
+      { upsert: true }
+    );
+    //await sendMail(email, loginCode);
+    return NextResponse.json("이메일 발송 완료");
+  } catch (e: any) {
+    return serverErrorResponse(e);
   }
-
-  const loginCode = getRandomCode();
-  console.log("로그인 코드", loginCode);
-
-  await LoginCode.findOneAndUpdate(
-    { email },
-    { $set: { code: loginCode } },
-    { upsert: true }
-  );
-  //await sendMail(email, loginCode);
-  return new Response("이메일 발송 완료", { status: 200 });
 }
 
 function getRandomCode() {

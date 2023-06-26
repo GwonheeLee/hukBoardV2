@@ -1,4 +1,5 @@
 import { PostEventHistory, addEventHistory } from "@/service/eventHistory";
+import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -10,17 +11,18 @@ export async function POST(req: NextRequest) {
     endDate,
   }: PostEventHistory = await req.json();
 
-  if (
-    !eventCode ||
-    !email ||
-    !description ||
-    !startDate ||
-    !endDate ||
-    startDate > endDate
-  ) {
-    return new Response("잘못된 파람", { status: 400 });
-  }
   try {
+    if (
+      !eventCode ||
+      !email ||
+      !description ||
+      !startDate ||
+      !endDate ||
+      startDate > endDate
+    ) {
+      throw new BadRequestError("잘못된 인자 값 입니다.");
+    }
+
     const result = await addEventHistory({
       eventCode,
       email,
@@ -30,7 +32,7 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ id: result });
-  } catch (e) {
-    return new Response(JSON.stringify(e), { status: 444 });
+  } catch (e: any) {
+    return serverErrorResponse(e);
   }
 }

@@ -1,4 +1,5 @@
 import { getAnnualListOf } from "@/service/annual";
+import { serverErrorResponse } from "@/utils/errro";
 import { NextRequest, NextResponse } from "next/server";
 
 type Context = {
@@ -16,6 +17,6 @@ export async function GET(_: NextRequest, context: Context) {
 
     return NextResponse.json(annualList);
   } catch (e: any) {
-    return new Response(e.message, { status: 400 });
+    return serverErrorResponse(e);
   }
 }

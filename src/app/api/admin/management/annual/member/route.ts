@@ -3,6 +3,7 @@ import { Annual, DBAnnual } from "@/models/annual.model";
 import { getAnnualOf } from "@/service/annual";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { getMember } from "@/service/member";
+import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { regEmail, regYear } from "@/utils/regex";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -10,17 +11,15 @@ export async function POST(req: NextRequest) {
   const { email, baseYear }: { email: string; baseYear: string } =
     await req.json();
 
-  if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
-    return new Response("올바른 인자 값이 아닙니다.", { status: 400 });
-  }
-
   try {
+    if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
+      throw new BadRequestError("올바른 인자 값이 아닙니다.");
+    }
+
     const member = await getMember(email);
 
     if (!member || !!member.resignDate) {
-      return new Response(`${email}에 해당하는 맴버는 없습니다.`, {
-        status: 400,
-      });
+      throw new BadRequestError(`${email}에 해당하는 맴버는 없습니다.`);
     }
 
     const prevBaseYear = (+baseYear - 1).toString();
@@ -28,9 +27,7 @@ export async function POST(req: NextRequest) {
     const curAnnual = await getAnnualOf(email, baseYear);
 
     if (curAnnual) {
-      return new Response(`${baseYear}에 해당하는 연차가 존재 합니다.`, {
-        status: 400,
-      });
+      throw new BadRequestError(`${baseYear}에 해당하는 연차가 존재 합니다.`);
     }
 
     const prevAnnual = await getAnnualOf(email, prevBaseYear);
@@ -57,7 +54,7 @@ export async function POST(req: NextRequest) {
     await Annual.create(newAnnual);
     return NextResponse.json("성공");
   } catch (e: any) {
-    return new Response(e.message, { status: 500 });
+    return serverErrorResponse(e);
   }
 }
 
@@ -69,23 +66,22 @@ export async function DELETE(req: NextRequest) {
 
   // const { email, baseYear }: { email: string; baseYear: string } =
   //   await req.json();
-
-  if (
-    !email ||
-    !baseYear ||
-    regEmail.test(email) === false ||
-    regYear.test(baseYear) === false
-  ) {
-    return new Response("올바른 인자 값이 아닙니다.", { status: 400 });
-  }
-
   try {
+    if (
+      !email ||
+      !baseYear ||
+      regEmail.test(email) === false ||
+      regYear.test(baseYear) === false
+    ) {
+      throw new BadRequestError("올바른 인자 값이 아닙니다.");
+    }
+
     await dbConnect();
 
     await Annual.deleteOne({ email, baseYear });
     return NextResponse.json("성공");
   } catch (e: any) {
-    return new Response(e.message, { status: 500 });
+    return serverErrorResponse(e);
   }
 }
 
