@@ -28,13 +28,15 @@ const annualSchema = new mongoose.Schema<DBAnnual & Document>(
 annualSchema.index({ email: "asc", baseYear: "desc" }, { unique: true });
 
 annualSchema.pre("save", async function (this, next) {
-  const annual = await Annual.findOne({
-    email: this.email,
-    baseYear: this.baseYear,
-  }).exec();
+  if (this.isNew) {
+    const annual = await Annual.findOne({
+      email: this.email,
+      baseYear: this.baseYear,
+    }).exec();
 
-  if (annual) {
-    return next(new Error(`${this.baseYear}년도 연차는 이미 존재 합니다.`));
+    if (annual) {
+      return next(new Error(`${this.baseYear}년도 연차는 이미 존재 합니다.`));
+    }
   }
 
   next();

@@ -4,6 +4,7 @@ import useSWR from "swr";
 import { useCallback, useState } from "react";
 import { DBAnnual } from "@/models/annual.model";
 import { SearchAnnual } from "@/service/annual";
+import { clientResponseHandler } from "@/utils/errro";
 
 export default function useAnnual() {
   const nowYear = new Date().getFullYear().toString();
@@ -54,13 +55,5 @@ async function putAnnual(annual: DBAnnual) {
   return fetch("/api/admin/annual", {
     method: "PUT",
     body: JSON.stringify(annual),
-  }).then(async (res) => {
-    if (!res.ok) {
-      const message = await res.text();
-
-      throw new Error(`상태코드 : ${res.status} \n 메세지 : ${message}`);
-    }
-
-    return res.json();
-  });
+  }).then(clientResponseHandler);
 }

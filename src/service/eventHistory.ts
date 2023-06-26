@@ -80,12 +80,8 @@ export async function addEventHistory(
 export async function updateApproval(id: string, approval: boolean) {
   await dbConnect();
 
-  //트랜잭션
-  const session = await mongoose.startSession();
-  session.startTransaction();
-
   try {
-    const event = await EventHistory.findById(id).session(session);
+    const event = await EventHistory.findById(id);
 
     if (!event || event.isApproval === approval) {
       return false;
@@ -103,7 +99,7 @@ export async function updateApproval(id: string, approval: boolean) {
     const annual = await Annual.findOne({
       email: event.email,
       baseYear: new DateObject(event.startDate).getFullYearString(),
-    }).session(session);
+    });
 
     if (!annual) {
       return false;
@@ -114,7 +110,6 @@ export async function updateApproval(id: string, approval: boolean) {
       eventModel.useCount;
 
     event.isApproval = approval;
-    await event.save();
 
     if (approval) {
       annual.useAnnualCount += useCount;
@@ -122,13 +117,10 @@ export async function updateApproval(id: string, approval: boolean) {
       annual.useAnnualCount -= useCount;
     }
     await annual.save();
-
-    await session.commitTransaction();
+    await event.save();
     return true;
   } catch (e) {
-    await session.abortTransaction();
+    console.log(e);
     return false;
-  } finally {
-    session.endSession();
   }
 }

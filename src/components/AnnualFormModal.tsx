@@ -17,29 +17,6 @@ export default function AnnualFormModal({ annual, close }: Props) {
     setDataForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleClick = () => {
-    setLoading(true);
-
-    fetch(`/api/admin/annual`, {
-      method: "PUT",
-      body: JSON.stringify(dataForm),
-    })
-      .then(async (res) => {
-        if (!res.ok) {
-          window.alert(`${res.status} ${await res.text()}`);
-          setLoading(false);
-          return;
-        }
-        window.alert("성공");
-        window.location.reload();
-      })
-
-      .catch((err) => {
-        window.alert(err.toString());
-        setLoading(false);
-      });
-  };
-
   if (loading) {
     return <LoadingSpinner />;
   }
