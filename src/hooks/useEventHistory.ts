@@ -20,7 +20,7 @@ export default function useEventHistoryList() {
     `/api/client/event-history/${baseYear}?pageNumber=${pageNumber}`
   );
   const addEventHistory = useCallback(
-    (event: PostEventHistory) => {
+    (event: Omit<PostEventHistory, "email">) => {
       return mutate(postEventHistory(event), {
         populateCache: false,
         revalidate: true,
@@ -81,7 +81,7 @@ export default function useEventHistoryList() {
   };
 }
 
-async function postEventHistory(event: PostEventHistory) {
+async function postEventHistory(event: Omit<PostEventHistory, "email">) {
   return fetch("/api/client/event-history", {
     method: "POST",
     body: JSON.stringify(event),
