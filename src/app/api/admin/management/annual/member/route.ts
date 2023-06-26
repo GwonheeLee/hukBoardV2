@@ -6,86 +6,91 @@ import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { getMember } from "@/service/member";
 import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { regEmail, regYear } from "@/utils/regex";
+import { withAdmin } from "@/utils/withReqeust";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { email, baseYear }: { email: string; baseYear: string } =
-    await req.json();
+  return withAdmin(async (member) => {
+    const { email, baseYear }: { email: string; baseYear: string } =
+      await req.json();
 
-  try {
-    if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
-      throw new BadRequestError("올바른 인자 값이 아닙니다.");
+    try {
+      if (regEmail.test(email) === false || regYear.test(baseYear) === false) {
+        throw new BadRequestError("올바른 인자 값이 아닙니다.");
+      }
+
+      const member = await getMember(email);
+
+      if (!member || !!member.resignDate) {
+        throw new BadRequestError(`${email}에 해당하는 맴버는 없습니다.`);
+      }
+
+      const prevBaseYear = (+baseYear - 1).toString();
+
+      const curAnnual = await getAnnualOf(email, baseYear);
+
+      if (curAnnual) {
+        throw new BadRequestError(`${baseYear}에 해당하는 연차가 존재 합니다.`);
+      }
+
+      const prevAnnual = await getAnnualOf(email, prevBaseYear);
+
+      const useAnnualCount = await getUseAnnualCountOf(email, baseYear);
+
+      const newAnnual: Omit<DBAnnual, "id"> = {
+        baseYear: baseYear,
+        email: email,
+        annualCount: await getAnnualCount(member.enterDate, baseYear),
+        useAnnualCount: useAnnualCount,
+        prevUseAnnualCount: prevAnnual
+          ? prevAnnual.annualCount -
+              prevAnnual.useAnnualCount -
+              prevAnnual.prevUseAnnualCount >=
+            0
+            ? 0
+            : Math.abs(
+                prevAnnual.annualCount -
+                  prevAnnual.useAnnualCount -
+                  prevAnnual.prevUseAnnualCount
+              )
+          : 0,
+      };
+
+      await Annual.create(newAnnual);
+      return NextResponse.json("성공");
+    } catch (e: any) {
+      return serverErrorResponse(e);
     }
-
-    const member = await getMember(email);
-
-    if (!member || !!member.resignDate) {
-      throw new BadRequestError(`${email}에 해당하는 맴버는 없습니다.`);
-    }
-
-    const prevBaseYear = (+baseYear - 1).toString();
-
-    const curAnnual = await getAnnualOf(email, baseYear);
-
-    if (curAnnual) {
-      throw new BadRequestError(`${baseYear}에 해당하는 연차가 존재 합니다.`);
-    }
-
-    const prevAnnual = await getAnnualOf(email, prevBaseYear);
-
-    const useAnnualCount = await getUseAnnualCountOf(email, baseYear);
-
-    const newAnnual: Omit<DBAnnual, "id"> = {
-      baseYear: baseYear,
-      email: email,
-      annualCount: await getAnnualCount(member.enterDate, baseYear),
-      useAnnualCount: useAnnualCount,
-      prevUseAnnualCount: prevAnnual
-        ? prevAnnual.annualCount -
-            prevAnnual.useAnnualCount -
-            prevAnnual.prevUseAnnualCount >=
-          0
-          ? 0
-          : Math.abs(
-              prevAnnual.annualCount -
-                prevAnnual.useAnnualCount -
-                prevAnnual.prevUseAnnualCount
-            )
-        : 0,
-    };
-
-    await Annual.create(newAnnual);
-    return NextResponse.json("성공");
-  } catch (e: any) {
-    return serverErrorResponse(e);
-  }
+  });
 }
 
 export async function DELETE(req: NextRequest) {
-  // nextjs 13 에서 delete의 body json 버그가 존재함
-  const { searchParams } = new URL(req.url);
-  const email = searchParams.get("email");
-  const baseYear = searchParams.get("baseYear");
+  return withAdmin(async (member) => {
+    // nextjs 13 에서 delete의 body json 버그가 존재함
+    const { searchParams } = new URL(req.url);
+    const email = searchParams.get("email");
+    const baseYear = searchParams.get("baseYear");
 
-  // const { email, baseYear }: { email: string; baseYear: string } =
-  //   await req.json();
-  try {
-    if (
-      !email ||
-      !baseYear ||
-      regEmail.test(email) === false ||
-      regYear.test(baseYear) === false
-    ) {
-      throw new BadRequestError("올바른 인자 값이 아닙니다.");
+    // const { email, baseYear }: { email: string; baseYear: string } =
+    //   await req.json();
+    try {
+      if (
+        !email ||
+        !baseYear ||
+        regEmail.test(email) === false ||
+        regYear.test(baseYear) === false
+      ) {
+        throw new BadRequestError("올바른 인자 값이 아닙니다.");
+      }
+
+      await dbConnect();
+
+      await Annual.deleteOne({ email, baseYear });
+      return NextResponse.json("성공");
+    } catch (e: any) {
+      return serverErrorResponse(e);
     }
-
-    await dbConnect();
-
-    await Annual.deleteOne({ email, baseYear });
-    return NextResponse.json("성공");
-  } catch (e: any) {
-    return serverErrorResponse(e);
-  }
+  });
 }
 
 async function getAnnualCount(enterDate: string, baseYear: string) {

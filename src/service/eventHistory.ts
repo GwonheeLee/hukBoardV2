@@ -27,6 +27,7 @@ export type SearchApproval = {
   isApproval: boolean;
 };
 export async function getEventHistoryListPage(
+  email: string,
   baseYear: string,
   pageNumber: number
 ): Promise<DBEventHistory[]> {
@@ -37,6 +38,7 @@ export async function getEventHistoryListPage(
 
   return (
     await EventHistory.find({
+      email,
       startDate: { $gte: startDate, $lte: endDate },
     })
       .sort({ startDate: "desc" })

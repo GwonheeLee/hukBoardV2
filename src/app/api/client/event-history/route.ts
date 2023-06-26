@@ -13,7 +13,7 @@ import {
   UnAuthorizedError,
   serverErrorResponse,
 } from "@/utils/errro";
-import { withMember } from "@/utils/middleware";
+import { withMember } from "@/utils/withReqeust";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
