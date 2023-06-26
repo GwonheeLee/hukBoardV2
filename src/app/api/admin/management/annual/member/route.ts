@@ -1,6 +1,7 @@
 import { dbConnect } from "@/lib/mongodb";
 import { Annual, DBAnnual } from "@/models/annual.model";
 import { getAnnualOf } from "@/service/annual";
+import { getUseAnnualCountOf } from "@/service/eventHistory";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "@/service/masterCode";
 import { getMember } from "@/service/member";
 import { BadRequestError, serverErrorResponse } from "@/utils/errro";
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
 
     const prevAnnual = await getAnnualOf(email, prevBaseYear);
 
-    const useAnnualCount = await getAnnualCount(email, baseYear);
+    const useAnnualCount = await getUseAnnualCountOf(email, baseYear);
 
     const newAnnual: Omit<DBAnnual, "id"> = {
       baseYear: baseYear,
