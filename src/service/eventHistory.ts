@@ -4,7 +4,8 @@ import { DBEventHistory, EventHistory } from "@/models/eventHistory.model";
 import { EventModel } from "@/models/eventModel.model";
 import { Member } from "@/models/member.model";
 import { DateObject } from "@/utils/date";
-import mongoose from "mongoose";
+import { regShortDate } from "@/utils/regex";
+
 const PAGE_SIZE = 10;
 export type PostEventHistory = {
   eventCode: string;
@@ -128,4 +129,31 @@ export async function updateApproval(id: string, approval: boolean) {
     console.log(e);
     return false;
   }
+}
+
+export async function getUseAnnualCountOf(baseYear: string, email: string) {
+  await dbConnect();
+
+  const startDate = `${baseYear}-01-01`;
+  const endDate = `${baseYear}-12-31`;
+
+  const eventHistory = await EventHistory.find({
+    email: email,
+    isApproval: true,
+    startDate: { $gte: startDate, $lte: endDate },
+  }).lean();
+
+  const eventModels = await EventModel.find({}).lean();
+
+  let useCount = 0;
+
+  eventHistory.forEach((e) => {
+    const eventModel = eventModels.find((em) => em.eventCode === e.eventCode);
+
+    const dayCount = DateObject.getBetweenDate(e.startDate, e.endDate).length;
+
+    useCount += dayCount * (eventModel?.useCount ?? 0);
+  });
+
+  return useCount;
 }

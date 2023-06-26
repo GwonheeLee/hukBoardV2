@@ -32,11 +32,13 @@ export async function POST(req: NextRequest) {
 
     const prevAnnual = await getAnnualOf(email, prevBaseYear);
 
+    const useAnnualCount = await getAnnualCount(email, baseYear);
+
     const newAnnual: Omit<DBAnnual, "id"> = {
       baseYear: baseYear,
       email: email,
       annualCount: await getAnnualCount(member.enterDate, baseYear),
-      useAnnualCount: 0,
+      useAnnualCount: useAnnualCount,
       prevUseAnnualCount: prevAnnual
         ? prevAnnual.annualCount -
             prevAnnual.useAnnualCount -
