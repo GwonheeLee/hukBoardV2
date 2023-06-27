@@ -3,7 +3,7 @@ import { getEventModelList } from "@/service/eventModel";
 import { getMembersForSchedule } from "@/service/member";
 import { getRandomColor } from "@/utils/common";
 
-export default async function ScheduleAdminPage() {
+export default async function SchedulePage() {
   const eventModels = await getEventModelList();
   const members = (await getMembersForSchedule()).map((m) => ({
     ...m,
@@ -15,7 +15,7 @@ export default async function ScheduleAdminPage() {
       <ScheduleCalendar
         eventModels={eventModels}
         members={members}
-        isAdmin={true}
+        isAdmin={false}
       />
     </section>
   );

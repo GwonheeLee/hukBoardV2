@@ -19,6 +19,11 @@ export type SearchMember = {
   teamCode: string;
 };
 
+export type ScheduleMember = {
+  name: string;
+  email: string;
+  teamCode: string;
+};
 export async function getMemberList(): Promise<SearchMember[]> {
   await dbConnect();
   return Member.find()
@@ -45,4 +50,12 @@ export async function getAuthMember(email: string): Promise<AuthUser | null> {
       }
       return i as AuthUser | null;
     });
+}
+
+export async function getMembersForSchedule(
+  teamCode?: string
+): Promise<ScheduleMember[]> {
+  await dbConnect();
+  const query = teamCode ? { teamCode } : {};
+  return Member.find(query).select("email name teamCode -_id").lean();
 }
