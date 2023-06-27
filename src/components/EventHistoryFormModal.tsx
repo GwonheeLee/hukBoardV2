@@ -41,7 +41,7 @@ export default function EventHistoryFormModal({
   ) => {
     setDataForm((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value.trim(),
+      [e.target.name]: e.target.value,
     }));
   };
 

@@ -156,11 +156,23 @@ export async function sendSlackChat(slackUID: string, message: string) {
 
 export async function sendSlackChatCompany(workType: string, message: string) {
   if (GMARKET_WORK_TYPE.includes(workType)) {
-    await sendSlackChat(config.slack.gmarketChannel, message);
+    await fetch(config.slack.gmarketChannel, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
   }
 
   if (EBAY_JAPAN_WORK_TYPE.includes(workType)) {
-    await sendSlackChat(config.slack.ebayJapanChannel, message);
+    await fetch(config.slack.ebayJapanChannel, {
+      method: "POST",
+      headers: {
+        "Content-type": "application/json",
+      },
+      body: JSON.stringify(message),
+    });
   }
 }
 // 팀 코드가 같은 관리자에게 승인요청
