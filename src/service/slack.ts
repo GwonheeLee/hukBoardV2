@@ -138,6 +138,9 @@ const VIEW_OPEN_URL = "https://slack.com/api/views.open";
 const CHAT_URL = "https://slack.com/api/chat.postMessage";
 
 export async function sendSlackChat(slackUID: string, message: string) {
+  if (slackUID === "") {
+    return;
+  }
   fetch(CHAT_URL, {
     method: "POST",
     headers: {
@@ -151,6 +154,15 @@ export async function sendSlackChat(slackUID: string, message: string) {
   });
 }
 
+export async function sendSlackChatCompany(workType: string, message: string) {
+  if (GMARKET_WORK_TYPE.includes(workType)) {
+    await sendSlackChat(config.slack.gmarketChannel, message);
+  }
+
+  if (EBAY_JAPAN_WORK_TYPE.includes(workType)) {
+    await sendSlackChat(config.slack.ebayJapanChannel, message);
+  }
+}
 // 팀 코드가 같은 관리자에게 승인요청
 export function eventPostMessageForm(
   title: "삭제" | "등록",

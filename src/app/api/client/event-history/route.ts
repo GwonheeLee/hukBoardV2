@@ -1,12 +1,14 @@
 import { dbConnect } from "@/lib/mongodb";
 import { EventHistory } from "@/models/eventHistory.model";
 import { EventModel } from "@/models/eventModel.model";
+import { Member } from "@/models/member.model";
 import {
   PostEventHistory,
   addEventHistory,
   isMonthOnceEventHistory,
   updateApproval,
 } from "@/service/eventHistory";
+import { sendSlackChat, sendSlackChatCompany } from "@/service/slack";
 import { DateObject } from "@/utils/date";
 import {
   BadRequestError,
@@ -60,18 +62,43 @@ export async function POST(req: NextRequest) {
         const approval = await updateApproval(result, true);
 
         if (approval) {
-          //TODO 승인 슬랙
+          const message = `
+          [승인 완료]
+          ID : ${result}
+          이벤트 : ${eventModel.name}
+          일정 : ${startDate} - ${endDate}
+          승인자 : JOB 
+          `;
+          await sendSlackChat(member.slackUID, message);
+          await sendSlackChatCompany(member.workType, message);
         } else {
-          //TODO 실패 슬랙
+          const message = `
+          [자동 승인 실패]
+          ID : ${result}
+          요청자 : ${member.name}
+          이벤트 : ${eventModel.name}
+          일정 : ${startDate} - ${endDate}
+          `;
+          await sendSlackChatCompany(member.workType, message);
+        }
+      } else {
+        const managers = await Member.find({
+          teamCode: member.teamCode,
+          isAdmin: true,
+        })
+          .select("slackUID")
+          .lean();
+        const message = `
+        [승인 요청]
+        이름 : ${member.name}
+        이벤트 : ${eventModel.name}
+        일정 : ${startDate} - ${endDate}
+        `;
+        for (let manager of managers) {
+          await sendSlackChat(manager.slackUID, message);
         }
       }
-      const data = {
-        name: member.name,
-        eventName: eventModel.name,
-        description: description,
-        startDate,
-        endDate,
-      };
+
       return NextResponse.json({ id: result });
     } catch (e: any) {
       return serverErrorResponse(e);
