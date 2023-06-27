@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
       { $set: { code: loginCode } },
       { upsert: true }
     );
-    //await sendMail(email, loginCode);
+    await sendMail(email, loginCode);
     return NextResponse.json("이메일 발송 완료");
   } catch (e: any) {
     return serverErrorResponse(e);
