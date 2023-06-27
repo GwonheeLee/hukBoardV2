@@ -1,6 +1,7 @@
 import { dbConnect } from "@/lib/mongodb";
 import { Annual } from "@/models/annual.model";
 import { Member } from "@/models/member.model";
+import { createAnnual } from "@/service/annual";
 import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { regYear } from "@/utils/regex";
 import { withAdmin } from "@/utils/withReqeust";
@@ -18,16 +19,20 @@ export async function POST(req: NextRequest) {
       await dbConnect();
 
       const memberList = await Member.find({ resignDate: null });
+
       const promiseList = memberList.map((member) =>
-        fetch(`${req.nextUrl.origin}/api/admin/management/annual/member`, {
-          method: "POST",
-          body: JSON.stringify({ email: member.email, baseYear }),
-          credentials: "include",
-        })
+        createAnnual(member, baseYear)
       );
 
-      await Promise.all(promiseList);
+      const result = await Promise.all(promiseList);
 
+      const failedResult = result.filter((i) => i.result === false);
+
+      if (failedResult.length > 0) {
+        return serverErrorResponse(
+          new Error(`실패 : ${failedResult.map((i) => `${i.name} `).join("")}`)
+        );
+      }
       return NextResponse.json("굳");
     } catch (e: any) {
       return serverErrorResponse(e);

@@ -3,6 +3,7 @@ import { regEmail, regYear } from "@/utils/regex";
 import { RadioGroup } from "@headlessui/react";
 import { ChangeEvent, useState } from "react";
 import LoadingSpinner from "../LoadingSpinner";
+import { clientResponseHandler } from "@/utils/errro";
 
 export default function AnnualMember() {
   const [dataForm, setDataForm] = useState({
@@ -40,17 +41,7 @@ export default function AnnualMember() {
         }),
       }
     )
-      .then(async (res) => {
-        if (!res.ok) {
-          window.alert(`${res.status} ${await res.text()}`);
-          return;
-        }
-        window.alert("성공");
-      })
-
-      .catch((err) => {
-        window.alert(err.toString());
-      })
+      .then(clientResponseHandler)
       .finally(() => setLoading(false));
   };
 
