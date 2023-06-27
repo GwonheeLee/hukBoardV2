@@ -15,4 +15,10 @@ export const config = {
   mongodb: {
     uri: required("MONGO_DB_URI"),
   },
+  slack: {
+    botToken: required("SLACK_BOT_TOKEN"),
+    verifyToken: required("SLACK_VERIFY_TOKEN"),
+    gmarketChannel: required("SLACK_GMARKET_CHANNER"),
+    ebayJapanChannel: required("SLACK_EBAY_JAPAN_CHANNER"),
+  },
 };

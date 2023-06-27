@@ -65,7 +65,13 @@ export async function POST(req: NextRequest) {
           //TODO 실패 슬랙
         }
       }
-
+      const data = {
+        name: member.name,
+        eventName: eventModel.name,
+        description: description,
+        startDate,
+        endDate,
+      };
       return NextResponse.json({ id: result });
     } catch (e: any) {
       return serverErrorResponse(e);
