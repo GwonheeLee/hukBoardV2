@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
         fetch(`${req.nextUrl.origin}/api/admin/management/annual/member`, {
           method: "POST",
           body: JSON.stringify({ email: member.email, baseYear }),
+          credentials: "same-origin",
         })
       );
 
