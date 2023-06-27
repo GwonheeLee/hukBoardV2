@@ -18,22 +18,39 @@ export async function getSchedule(date: string, teamCode?: string) {
   await dbConnect();
 
   const base = new DateObject(`${date}-01`);
+  const baseMonth = date.slice(-2);
   const startDate = base.toShortDate();
   const endDate = base.setLastDate().toShortDate();
 
   let teamMembers: string[];
+
   let query: any = {
-    startDate: { $gte: startDate, $lte: endDate },
-    isApproval: true,
+    $and: [
+      {
+        $or: [
+          { startDate: { $gte: startDate, $lte: endDate } },
+          { endDate: { $gte: startDate, $lte: endDate } },
+        ],
+      },
+      { isApproval: true },
+    ],
   };
+
   if (teamCode) {
     teamMembers = (await Member.find({ teamCode }).select("email").lean()).map(
       (m) => m.email
     );
     query = {
-      startDate: { $gte: startDate, $lte: endDate },
-      isApproval: true,
-      email: { $in: teamMembers },
+      $and: [
+        {
+          $or: [
+            { startDate: { $gte: startDate, $lte: endDate } },
+            { endDate: { $gte: startDate, $lte: endDate } },
+          ],
+        },
+        { isApproval: true },
+        { email: { $in: teamMembers } },
+      ],
     };
   }
 
@@ -45,7 +62,8 @@ export async function getSchedule(date: string, teamCode?: string) {
     const list = DateObject.getBetweenDate(eh.startDate, eh.endDate).map(
       (date) => ({ email: eh.email, eventCode: eh.eventCode, date })
     );
-    datas.push(...list);
+
+    datas.push(...list.filter((i) => i.date.slice(5, 7) === baseMonth));
   });
 
   const map: ScheduleMap = new Map();

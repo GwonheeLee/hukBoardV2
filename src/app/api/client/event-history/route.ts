@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       }
 
       if (
-        eventModel.isNeedApproval === false ||
+        eventModel.isNeedApproval === false &&
         startDate >= new DateObject().toShortDate()
       ) {
         const approval = await updateApproval(result, true);

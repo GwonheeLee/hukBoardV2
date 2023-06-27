@@ -28,6 +28,10 @@ export default function EventHistoryFormModal({
       window.alert("사유를 작성 해주세요");
       return;
     }
+    if (dataForm.startDate > dataForm.endDate) {
+      window.alert("시작일이 종료일 보다 클 순 없습니다.");
+      return;
+    }
     addEventHistory(dataForm);
     close();
   };
@@ -40,26 +44,7 @@ export default function EventHistoryFormModal({
       [e.target.name]: e.target.value.trim(),
     }));
   };
-  const handleDateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    switch (e.target.name) {
-      case "startDate":
-        if (!!dataForm.endDate && dataForm.endDate < e.target.value) {
-          window.alert("시작일이 종료일 보다 클 수는 없습니다.");
-          return;
-        }
-        setDataForm((prev) => ({ ...prev, ["startDate"]: e.target.value }));
-        break;
-      case "endDate":
-        if (!!dataForm.startDate && dataForm.startDate > e.target.value) {
-          window.alert("종료일이 시작일 보다 클 수는 없습니다.");
-          return;
-        }
-        setDataForm((prev) => ({ ...prev, ["endDate"]: e.target.value }));
-        break;
-      default:
-        throw new Error("Date Input의 Name이 잘못 되었습니다.");
-    }
-  };
+
   return (
     <>
       <div className="border-b border-gray-200 bg-white px-4 py-5 sm:px-6">
@@ -133,7 +118,7 @@ export default function EventHistoryFormModal({
               id="startDate"
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               value={dataForm.startDate}
-              onChange={handleDateChange}
+              onChange={handleInputSelectBoxChange}
             />
           </div>
         </div>
@@ -154,7 +139,7 @@ export default function EventHistoryFormModal({
               id="endDate"
               className="block w-full rounded-md border-0  py-1.5 pl-1.5 ml-10 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
               value={dataForm.endDate}
-              onChange={handleDateChange}
+              onChange={handleInputSelectBoxChange}
             />
           </div>
         </div>

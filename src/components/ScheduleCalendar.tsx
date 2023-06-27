@@ -57,7 +57,7 @@ export default function ScheduleCalendar({
         setData(map);
       })
       .finally(() => setLoading(false));
-  }, [month, eventModels, members]);
+  }, [month, eventModels, members, isAdmin]);
 
   return (
     <>
@@ -98,7 +98,7 @@ export default function ScheduleCalendar({
                     <div
                       key={item.date}
                       id={item.date}
-                      className={`min-h-[120px] bg-white relative py-2 px-3 cursor-pointer hover:underline  ${
+                      className={`min-h-[120px] bg-white relative py-2 px-3  ${
                         item.isWeekend ? "text-main-color" : ""
                       }`}
                     >

@@ -58,7 +58,7 @@ const eventHistorySchema = new mongoose.Schema<DBEventHistory & Document>(
   }
 );
 eventHistorySchema.index({ startDate: "desc" });
-
+eventHistorySchema.index({ endDate: "desc" });
 eventHistorySchema.pre("save", async function (this, next) {
   const member = await Member.findOne({ email: this.email });
 
