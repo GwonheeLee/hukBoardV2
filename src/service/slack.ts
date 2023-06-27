@@ -161,7 +161,7 @@ export async function sendSlackChatCompany(workType: string, message: string) {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(message),
+      body: JSON.stringify({ text: message }),
     });
   }
 
@@ -171,7 +171,7 @@ export async function sendSlackChatCompany(workType: string, message: string) {
       headers: {
         "Content-type": "application/json",
       },
-      body: JSON.stringify(message),
+      body: JSON.stringify({ text: message }),
     });
   }
 }
