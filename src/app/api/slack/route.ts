@@ -3,8 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 const CHAT_URL = "https://slack.com/api/chat.postMessage";
 export async function POST(req: NextRequest) {
   try {
-    console.log(req);
-    const payload = req.json();
+    const payload = await req.json();
     console.log("페이 : ", payload);
     return NextResponse.json("ok");
   } catch (e) {}
