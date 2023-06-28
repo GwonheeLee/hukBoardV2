@@ -77,7 +77,7 @@ export async function POST(req: NextRequest) {
           `;
           await sendSlackChat(member.slackUID, message);
           await sendSlackChatManager(member.teamCode, message);
-          //await sendSlackChatCompany(member.workType, message);
+          await sendSlackChatCompany(member.workType, message);
         } else {
           const message = `
           [자동 승인 실패]
@@ -156,7 +156,7 @@ export async function DELETE(req: NextRequest) {
         일정 : ${event.startDate} - ${event.endDate}
         `;
         await sendSlackChatManager(member.teamCode, message);
-        //await sendSlackChatCompany(member.workType, message);
+        await sendSlackChatCompany(member.workType, message);
       }
 
       return NextResponse.json("성공");
