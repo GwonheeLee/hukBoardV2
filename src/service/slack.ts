@@ -219,5 +219,5 @@ export async function sendSlackChatApproval(id: string, approvalAdmin: string) {
 
   await sendSlackChat(member?.slackUID ?? "", message);
   await sendSlackChatManager(member?.teamCode ?? "", message);
-  await sendSlackChatCompany(member?.workType ?? "", message);
+  // await sendSlackChatCompany(member?.workType ?? "", message);
 }
