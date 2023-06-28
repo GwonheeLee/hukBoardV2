@@ -44,6 +44,13 @@ export async function POST(req: NextRequest) {
         throw new BadRequestError("잘못된 이벤트 모델 입니다.");
       }
 
+      if (
+        eventModel.isMonthOnce &&
+        (await isMonthOnceEventHistory(eventCode, startDate, member.email))
+      ) {
+        throw new BadRequestError("이번 달은 이미 사용한 이벤트 입니다.");
+      }
+
       const result = await addEventHistory({
         eventCode,
         email: member.email,
@@ -51,13 +58,6 @@ export async function POST(req: NextRequest) {
         startDate,
         endDate,
       });
-
-      if (
-        eventModel.isMonthOnce &&
-        (await isMonthOnceEventHistory(eventCode, startDate, member.email))
-      ) {
-        throw new BadRequestError("이번 달은 이미 사용한 이벤트 입니다.");
-      }
 
       if (
         eventModel.isNeedApproval === false &&
