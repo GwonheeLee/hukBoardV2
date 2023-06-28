@@ -140,7 +140,7 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json("ok");
+    return new Response();
   } catch (e) {
     return new Response("Unkown", { status: 500 });
   }
