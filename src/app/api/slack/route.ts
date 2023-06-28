@@ -50,99 +50,99 @@ export async function POST(req: NextRequest) {
     }
     // 모달 Submit
     else if (parsedPayload.type === "view_submission") {
-      await dbConnect();
-      // 등록 된 사용자 인지 체크
-      if (!slackUID || slackUID === "") {
-        return new Response("UnAuthorized", { status: 403 });
-      }
-
-      const member = await Member.findOne({ slackUID: slackUID });
-
-      if (!member) {
-        return new Response("UnAuthorized", { status: 403 });
-      }
-
-      const state = parsedPayload?.view?.state?.values;
-      const stateArray = Object.values(state);
-
-      let date;
-      let eventCode;
-      let description;
-
-      for (let i = 0; i < stateArray.length; i++) {
-        let obj = stateArray[i] as any;
-        let actionId = Object.keys(obj)[0];
-
-        switch (actionId) {
-          case DATE_PICKER_ID:
-            date = obj[actionId]["selected_date"];
-            break;
-          case EVENT_OTPION_ID:
-            eventCode =
-              obj[actionId]["selected_option"] &&
-              obj[actionId]["selected_option"]["value"];
-            break;
-          case DESCRIPTION_ID:
-            description = obj[actionId]["value"];
-            break;
-          default:
-            throw new Error("올바른 Action ID 가 아닙니다." + actionId);
-        }
-      }
-
-      if (!description) {
-        return new Response("Bad Request", { status: 404 });
-      }
-
-      const result = await addEventHistory({
-        eventCode,
-        email: member.email,
-        description,
-        startDate: date,
-        endDate: date,
-      });
-
-      if (date >= new DateObject().toShortDate()) {
-        const approval = await updateApproval(result, true);
-
-        if (approval) {
-          const message = `
-          [자동 승인 완료]
-          ID : ${result}
-          요청자 : ${member.name}
-          이벤트 :${getEventName(eventCode)}
-          사유 : ${description}
-          일정 : ${date} - ${date}
-          승인자 : JOB 
-          `;
-          sendSlackChat(member.slackUID, message);
-          sendSlackChatManager(member.teamCode, message);
-          //await sendSlackChatCompany(member.workType, message);
-        } else {
-          const message = `
-          [자동 승인 실패]
-          ID : ${result}
-          요청자 : ${member.name}
-          이벤트 : ${getEventName(eventCode)}
-          사유 : ${description}
-          일정 : ${date} - ${date}
-          `;
-          sendSlackChat(member.slackUID, message);
-        }
-      } else {
-        const message = `
-        [승인 요청]
-        이름 : ${member.name}
-        이벤트 : ${getEventName(eventCode)}
-        일정 : ${date} - ${date}
-        `;
-        sendSlackChatManager(member.teamCode, message);
-      }
+      modalSubmit(parsedPayload, slackUID);
     }
 
-    return new Response();
+    return NextResponse.json("", { status: 200 });
   } catch (e) {
     return new Response("Unknown", { status: 500 });
+  }
+}
+
+async function modalSubmit(parsedPayload: any, slackUID: string) {
+  await dbConnect();
+  // 등록 된 사용자 인지 체크
+  if (!slackUID || slackUID === "") {
+    return;
+  }
+
+  const member = await Member.findOne({ slackUID: slackUID });
+
+  if (!member) {
+    return;
+  }
+
+  const state = parsedPayload?.view?.state?.values;
+  const stateArray = Object.values(state);
+
+  let date;
+  let eventCode;
+  let description;
+
+  for (let i = 0; i < stateArray.length; i++) {
+    let obj = stateArray[i] as any;
+    let actionId = Object.keys(obj)[0];
+
+    switch (actionId) {
+      case DATE_PICKER_ID:
+        date = obj[actionId]["selected_date"];
+        break;
+      case EVENT_OTPION_ID:
+        eventCode =
+          obj[actionId]["selected_option"] &&
+          obj[actionId]["selected_option"]["value"];
+        break;
+      case DESCRIPTION_ID:
+        description = obj[actionId]["value"];
+        break;
+      default:
+        throw new Error("올바른 Action ID 가 아닙니다." + actionId);
+    }
+  }
+
+  const result = await addEventHistory({
+    eventCode,
+    email: member.email,
+    description,
+    startDate: date,
+    endDate: date,
+  });
+
+  if (date >= new DateObject().toShortDate()) {
+    const approval = await updateApproval(result, true);
+
+    if (approval) {
+      const message = `
+      [자동 승인 완료]
+      ID : ${result}
+      요청자 : ${member.name}
+      이벤트 :${getEventName(eventCode)}
+      사유 : ${description}
+      일정 : ${date} - ${date}
+      승인자 : JOB 
+      `;
+      sendSlackChat(member.slackUID, message);
+      sendSlackChatManager(member.teamCode, message);
+      //await sendSlackChatCompany(member.workType, message);
+    } else {
+      const message = `
+      [자동 승인 실패]
+      ID : ${result}
+      요청자 : ${member.name}
+      이벤트 : ${getEventName(eventCode)}
+      사유 : ${description}
+      일정 : ${date} - ${date}
+      `;
+      sendSlackChat(member.slackUID, message);
+    }
+  } else {
+    const message = `
+    [승인 요청]
+    이름 : ${member.name}
+    이벤트 : ${getEventName(eventCode)}
+    일정 : ${date} - ${date}
+    `;
+    sendSlackChatManager(member.teamCode, message);
   }
 }
 
