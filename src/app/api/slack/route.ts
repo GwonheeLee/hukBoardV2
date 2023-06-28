@@ -115,8 +115,8 @@ export async function POST(req: NextRequest) {
           일정 : ${date} - ${date}
           승인자 : JOB 
           `;
-          await sendSlackChat(member.slackUID, message);
-          await sendSlackChatManager(member.teamCode, message);
+          sendSlackChat(member.slackUID, message);
+          sendSlackChatManager(member.teamCode, message);
           //await sendSlackChatCompany(member.workType, message);
         } else {
           const message = `
@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
           사유 : ${description}
           일정 : ${date} - ${date}
           `;
-          await sendSlackChat(member.slackUID, message);
+          sendSlackChat(member.slackUID, message);
         }
       } else {
         const message = `
@@ -136,13 +136,13 @@ export async function POST(req: NextRequest) {
         이벤트 : ${getEventName(eventCode)}
         일정 : ${date} - ${date}
         `;
-        await sendSlackChatManager(member.teamCode, message);
+        sendSlackChatManager(member.teamCode, message);
       }
     }
 
     return new Response();
   } catch (e) {
-    return new Response("Unkown", { status: 500 });
+    return new Response("Unknown", { status: 500 });
   }
 }
 
