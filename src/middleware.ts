@@ -5,9 +5,12 @@ export async function middleware(req: NextRequest) {
   const token = await getToken({ req });
 
   if (!token) {
-    const { origin, basePath } = req.nextUrl;
-    const signInUrl = new URL(`${basePath}/signIn`, origin);
-
+    const { pathname, search, origin, basePath } = req.nextUrl;
+    const signInUrl = new URL(`${basePath}/auth/signin`, origin);
+    signInUrl.searchParams.append(
+      "callbackUrl",
+      `${basePath}${pathname}${search}`
+    );
     return NextResponse.redirect(signInUrl);
   }
 
