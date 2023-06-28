@@ -145,11 +145,11 @@ export async function sendSlackChat(slackUID: string, message: string) {
     method: "POST",
     headers: {
       Authorization: "Bearer " + config.slack.botToken,
-      "Content-Type": "application/json",
+      "Content-Type": "application/json; charset=utf-8",
     },
     body: JSON.stringify({
       channel: slackUID,
-      message,
+      text: message,
     }),
   });
 }
