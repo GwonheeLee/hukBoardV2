@@ -1,3 +1,4 @@
+import AnnualInfo from "@/components/AnnualInfo";
 import ScheduleCalendar from "@/components/ScheduleCalendar";
 import { getEventModelList } from "@/service/eventModel";
 import { getMembersForSchedule } from "@/service/member";
@@ -12,6 +13,7 @@ export default async function SchedulePage() {
 
   return (
     <section className="w-full">
+      <AnnualInfo />
       <ScheduleCalendar
         eventModels={eventModels}
         members={members}

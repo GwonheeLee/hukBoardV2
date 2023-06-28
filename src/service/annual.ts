@@ -4,6 +4,7 @@ import { DBMember, Member } from "@/models/member.model";
 import { regEmail, regYear } from "@/utils/regex";
 import { MASTER_CODE_ENUM, getMasterCodeOf } from "./masterCode";
 import { getUseAnnualCountOf } from "./eventHistory";
+import { DateObject } from "@/utils/date";
 
 export type SearchAnnual = DBAnnual & {
   name: string;
@@ -102,6 +103,17 @@ export async function createAnnual(member: DBMember, baseYear: string) {
   }
 }
 
+export async function getAnnualInfo(email: string) {
+  await dbConnect();
+  const baseYear = new DateObject().getFullYearString();
+  const annual = await Annual.findOne({ email, baseYear }).lean();
+
+  return {
+    annualCount: annual?.annualCount ?? 0,
+    useAnnualCount: annual?.useAnnualCount ?? 0,
+    prevUseAnnualCount: annual?.prevUseAnnualCount ?? 0,
+  };
+}
 async function getAnnualCount(enterDate: string, baseYear: string) {
   const date = new Date(enterDate);
 
