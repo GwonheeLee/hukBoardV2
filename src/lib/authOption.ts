@@ -42,6 +42,9 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url }) {
+      return new URL(url).origin;
+    },
     async signIn(user) {
       if (!user.user.email) {
         return false;

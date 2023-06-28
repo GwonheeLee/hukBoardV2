@@ -209,12 +209,12 @@ export async function sendSlackChatApproval(id: string, approvalAdmin: string) {
 
   const message = `
   [승인 완료]
-  ID : ${id}
-  요청자 : ${member?.name}
-  이벤트 : ${eventModel?.name}
-  사유 : ${event?.description}
-  일정 : ${event?.startDate} - ${event?.endDate}
-  승인자 : ${approvalAdmin}
+    ID : ${id}
+    요청자 : ${member?.name}
+    이벤트 : ${eventModel?.name}
+    사유 : ${event?.description}
+    일정 : ${event?.startDate} - ${event?.endDate}
+    승인자 : ${approvalAdmin}
   `;
 
   await sendSlackChat(member?.slackUID ?? "", message);
