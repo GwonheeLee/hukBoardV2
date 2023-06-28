@@ -49,7 +49,7 @@ export async function POST(req: NextRequest) {
       });
     }
     // 모달 Submit
-    else if (payload.type === "view_submission") {
+    else if (parsedPayload.type === "view_submission") {
       await dbConnect();
       // 등록 된 사용자 인지 체크
       if (!slackUID || slackUID === "") {
