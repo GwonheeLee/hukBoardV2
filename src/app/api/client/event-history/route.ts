@@ -65,21 +65,24 @@ export async function POST(req: NextRequest) {
           const message = `
           [승인 완료]
           ID : ${result}
+          요청자 : ${member.name}
           이벤트 : ${eventModel.name}
+          사유 : ${description}
           일정 : ${startDate} - ${endDate}
           승인자 : JOB 
           `;
           await sendSlackChat(member.slackUID, message);
-          await sendSlackChatCompany(member.workType, message);
+          //await sendSlackChatCompany(member.workType, message);
         } else {
           const message = `
           [자동 승인 실패]
           ID : ${result}
           요청자 : ${member.name}
           이벤트 : ${eventModel.name}
+          사유 : ${description}
           일정 : ${startDate} - ${endDate}
           `;
-          await sendSlackChatCompany(member.workType, message);
+          //await sendSlackChatCompany(member.workType, message);
         }
       } else {
         const managers = await Member.find({
