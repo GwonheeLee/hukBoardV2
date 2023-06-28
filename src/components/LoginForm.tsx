@@ -3,7 +3,6 @@
 import { signIn } from "next-auth/react";
 import { useState } from "react";
 import LoadingSpinner from "./LoadingSpinner";
-import { useRouter } from "next/navigation";
 
 enum LoginStep {
   STEP1,
@@ -15,8 +14,6 @@ export default function EmailCheckForm() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [loginCode, setLoginCode] = useState("");
-
-  const router = useRouter();
 
   const handleClick = async () => {
     setLoading(true);
@@ -30,16 +27,7 @@ export default function EmailCheckForm() {
         res.ok && setStep(LoginStep.STEP2);
       });
     } else if (step === LoginStep.STEP2) {
-      signIn("credentials", { redirect: false, email, code: loginCode }).then(
-        (res) => {
-          if (!res?.error) {
-            router.replace("/");
-          } else {
-            window.alert(res?.error);
-            setLoading(false);
-          }
-        }
-      );
+      signIn("credentials", { redirect: true, email, code: loginCode });
     }
   };
 
