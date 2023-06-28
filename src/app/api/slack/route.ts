@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
 
     // 모달 오픈
     if (parsedPayload.type === "shortcut") {
-      await fetch(VIEW_OPEN_URL, {
+      fetch(VIEW_OPEN_URL, {
         method: "POST",
         headers: {
           Authorization: "Bearer " + config.slack.botToken,
