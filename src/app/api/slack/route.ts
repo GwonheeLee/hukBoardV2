@@ -15,8 +15,10 @@ export async function POST(req: NextRequest) {
     }
 
     const payload = parse(body);
+    //     const parsedPayload = JSON.parse(payload!.payload);
+    // const token = parsedPayload.token;
 
-    console.log(payload.token);
+    //     console.log(payload?.payload?.token );
     return NextResponse.json("ok");
   } catch (e) {}
 }

@@ -5,6 +5,8 @@ import { EventModel } from "@/models/eventModel.model";
 import { Member } from "@/models/member.model";
 import { DateObject } from "@/utils/date";
 import { regShortDate } from "@/utils/regex";
+import { getMember } from "./member";
+import { getEventModel } from "./eventModel";
 
 const PAGE_SIZE = 10;
 export type PostEventHistory = {

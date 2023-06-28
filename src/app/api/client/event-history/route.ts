@@ -8,7 +8,11 @@ import {
   isMonthOnceEventHistory,
   updateApproval,
 } from "@/service/eventHistory";
-import { sendSlackChat, sendSlackChatCompany } from "@/service/slack";
+import {
+  sendSlackChat,
+  sendSlackChatCompany,
+  sendSlackChatManager,
+} from "@/service/slack";
 import { DateObject } from "@/utils/date";
 import {
   BadRequestError,
@@ -63,7 +67,7 @@ export async function POST(req: NextRequest) {
 
         if (approval) {
           const message = `
-          [승인 완료]
+          [자동 승인 완료]
           ID : ${result}
           요청자 : ${member.name}
           이벤트 : ${eventModel.name}
@@ -72,6 +76,7 @@ export async function POST(req: NextRequest) {
           승인자 : JOB 
           `;
           await sendSlackChat(member.slackUID, message);
+          await sendSlackChatManager(member.teamCode, message);
           //await sendSlackChatCompany(member.workType, message);
         } else {
           const message = `
@@ -82,24 +87,16 @@ export async function POST(req: NextRequest) {
           사유 : ${description}
           일정 : ${startDate} - ${endDate}
           `;
-          //await sendSlackChatCompany(member.workType, message);
+          await sendSlackChat(member.slackUID, message);
         }
       } else {
-        const managers = await Member.find({
-          teamCode: member.teamCode,
-          isAdmin: true,
-        })
-          .select("slackUID")
-          .lean();
         const message = `
         [승인 요청]
         이름 : ${member.name}
         이벤트 : ${eventModel.name}
         일정 : ${startDate} - ${endDate}
         `;
-        for (let manager of managers) {
-          await sendSlackChat(manager.slackUID, message);
-        }
+        await sendSlackChatManager(member.teamCode, message);
       }
 
       return NextResponse.json({ id: result });
@@ -148,6 +145,19 @@ export async function DELETE(req: NextRequest) {
       }
 
       await EventHistory.deleteOne({ _id: id });
+
+      if (event.isApproval) {
+        const message = `
+        [삭제]
+        ID : ${result}
+        요청자 : ${member.name}
+        이벤트 코드 : ${event.eventCode}
+        사유 : ${event.description}
+        일정 : ${event.startDate} - ${event.endDate}
+        `;
+        await sendSlackChatManager(member.teamCode, message);
+        //await sendSlackChatCompany(member.workType, message);
+      }
 
       return NextResponse.json("성공");
     } catch (e: any) {

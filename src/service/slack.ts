@@ -1,4 +1,8 @@
 import { config } from "@/lib/config";
+import { dbConnect } from "@/lib/mongodb";
+import { EventHistory } from "@/models/eventHistory.model";
+import { EventModel } from "@/models/eventModel.model";
+import { Member } from "@/models/member.model";
 const GMARKET_WORK_TYPE = ["H01001", "H01002"];
 const EBAY_JAPAN_WORK_TYPE = ["H01101", "H01102"];
 
@@ -155,6 +159,10 @@ export async function sendSlackChat(slackUID: string, message: string) {
 }
 
 export async function sendSlackChatCompany(workType: string, message: string) {
+  if (workType === "") {
+    return;
+  }
+
   if (GMARKET_WORK_TYPE.includes(workType)) {
     await fetch(config.slack.gmarketChannel, {
       method: "POST",
@@ -175,48 +183,41 @@ export async function sendSlackChatCompany(workType: string, message: string) {
     });
   }
 }
-// 팀 코드가 같은 관리자에게 승인요청
-export function eventPostMessageForm(
-  title: "삭제" | "등록",
-  data: EventPostmMessage
-) {
-  const message = `[승인요청]
-  이름 : ${data.name}
-  이벤트명 : ${data.eventName}
-  사유 : ${data.description}
-  시작일 : ${data.startDate}
-  종료일 : ${data.endDate}
-  `;
 
-  return message;
+export async function sendSlackChatManager(teamCode: string, message: string) {
+  if (teamCode === "") {
+    return;
+  }
+
+  await dbConnect();
+
+  const managers = await Member.find({ teamCode, isAdmin: true });
+
+  for (let manager of managers) {
+    await sendSlackChat(manager.slackUID, message);
+  }
 }
 
-export function eventApprovalMessageForm(data: EventApprovalMessage) {
-  const message = `[반영]
-  이벤트 ID : ${data.id}
-  이름 : ${data.name}
-  이벤트명 : ${data.eventName}
-  사유 : ${data.description}
-  시작일 : ${data.startDate}
-  종료일 : ${data.endDate}
-  연차 : ${data.annualCount}
-  사용량 : ${data.useCount + data.prevUseAnnualCount}
+export async function sendSlackChatApproval(id: string, approvalAdmin: string) {
+  await dbConnect();
+
+  const event = await EventHistory.findById(id);
+
+  const member = await Member.findOne({ email: event?.email });
+
+  const eventModel = await EventModel.findOne({ eventCode: event?.eventCode });
+
+  const message = `
+  [승인 완료]
+  ID : ${id}
+  요청자 : ${member?.name}
+  이벤트 : ${eventModel?.name}
+  사유 : ${event?.description}
+  일정 : ${event?.startDate} - ${event?.endDate}
+  승인자 : ${approvalAdmin}
   `;
 
-  return message;
+  await sendSlackChat(member?.slackUID ?? "", message);
+  await sendSlackChatManager(member?.teamCode ?? "", message);
+  await sendSlackChatCompany(member?.workType ?? "", message);
 }
-
-export type EventPostmMessage = {
-  name: string;
-  eventName: string;
-  description: string;
-  startDate: string;
-  endDate: string;
-};
-
-export type EventApprovalMessage = EventPostmMessage & {
-  id: string;
-  annualCount: number;
-  useCount: number;
-  prevUseAnnualCount: number;
-};

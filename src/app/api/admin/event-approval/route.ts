@@ -1,5 +1,6 @@
 import { EventHistory } from "@/models/eventHistory.model";
 import { getSearchApprovalList, updateApproval } from "@/service/eventHistory";
+import { sendSlackChatApproval } from "@/service/slack";
 import { BadRequestError, serverErrorResponse } from "@/utils/errro";
 import { withAdmin } from "@/utils/withReqeust";
 import { NextRequest, NextResponse } from "next/server";
@@ -36,6 +37,7 @@ export async function PATCH(req: NextRequest) {
       if (!result) {
         throw new BadRequestError("승인 실패");
       } else {
+        await sendSlackChatApproval(id, member.name);
         return NextResponse.json("성공");
       }
     } catch (e: any) {
